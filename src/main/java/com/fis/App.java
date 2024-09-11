@@ -27,20 +27,21 @@ public final class App {
     public static void main(String[] args) throws FileNotFoundException, IOException, SQLException {
         List<Branch> ds = ExcelReaderService.readBranchExcel("ds_branch.xlsx");
         // cut branch folderPath from /FTPData
-        for (Branch branch : ds) {
-            String folderPath = branch.getFolderPath();
-            if (folderPath.contains("/FTPData")) {
-                folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
-                branch.setFolderPath(folderPath);
-            }else{
-                branch.setFolderPath("/FTPData/" );
-            }
-            ReportService.ISS011Report(branch);
-            ReportService.ISS012Report(branch);
-            ReportService.ACQ009Report(branch);
-        }
-        // ReportService.CMS018Report();
-        ReportService.ATM002REPORT();
-        ReportService.GL007Report();
+        // for (Branch branch : ds) {
+        //     String folderPath = branch.getFolderPath();
+        //     if (folderPath.contains("/FTPData")) {
+        //         folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
+        //         branch.setFolderPath(folderPath);
+        //     }else{
+        //         branch.setFolderPath("/FTPData/" );
+        //     }
+        //     ReportService.ISS011Report(branch);
+        //     ReportService.ISS012Report(branch);
+        //     ReportService.ACQ009Report(branch);
+        // }
+        // // ReportService.CMS018Report();
+        // ReportService.ATM002REPORT();
+        // ReportService.GL007Report();
+        ReportService.GL005ISSReport();
     }
 }
