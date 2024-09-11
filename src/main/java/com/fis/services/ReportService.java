@@ -172,10 +172,10 @@ public class ReportService {
         inputParams.put(1, branch.getBranchCode());
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
-        // List<DynamicObject> dynamicObjects =
-        // databaseService.callProcedure("REPORT_MIGRATE", "ISS_011", columns,
-        // inputParams, outParams);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects =
+        databaseService.callProcedure("REPORT_MIGRATE", "ISS_011", columns,
+        inputParams, outParams);
+        // List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
             dynamicObject1.setColumns(columns);
@@ -288,11 +288,11 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
 
-        // List<DynamicObject> dynamicObjects =
-        // databaseService.callProcedure("REPORT_MIGRATE", "ISS_012", columns,
-        // inputParams, outParams);
+        List<DynamicObject> dynamicObjects =
+        databaseService.callProcedure("REPORT_MIGRATE", "ISS_012", columns,
+        inputParams, outParams);
 
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        // List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
             dynamicObject1.setColumns(columns);
