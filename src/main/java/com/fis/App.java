@@ -26,22 +26,28 @@ public final class App {
      */
     public static void main(String[] args) throws FileNotFoundException, IOException, SQLException {
         List<Branch> ds = ExcelReaderService.readBranchExcel("ds_branch.xlsx");
-        // cut branch folderPath from /FTPData
-        // for (Branch branch : ds) {
-        //     String folderPath = branch.getFolderPath();
-        //     if (folderPath.contains("/FTPData")) {
-        //         folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
-        //         branch.setFolderPath(folderPath);
-        //     }else{
-        //         branch.setFolderPath("/FTPData/" );
-        //     }
-        //     ReportService.ISS011Report(branch);
-        //     ReportService.ISS012Report(branch);
-        //     ReportService.ACQ009Report(branch);
-        // }
-        // // ReportService.CMS018Report();
+        for (Branch branch : ds) {
+            String folderPath = branch.getFolderPath();
+            if (folderPath.contains("/FTPData")) {
+                folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
+                branch.setFolderPath(folderPath);
+            }else{
+                branch.setFolderPath("/FTPData/" );
+            }
+            // ReportService.ISS009Report(branch);
+            // ReportService.ISS010Report(branch);
+            ReportService.ISS011Report(branch);
+            // ReportService.ISS012Report(branch);
+            // ReportService.ACQ009Report(branch);
+
+        }
+        // ReportService.ReportATM001();
         // ReportService.ATM002REPORT();
+        // ReportService.GL005ISSReport();
         // ReportService.GL007Report();
-        ReportService.GL005ISSReport();
+        // ReportService.ISS0010();
+        // ReportService.ISS0011();
+        // ReportService.ISS002();
+        // ReportService.ISS005();
     }
 }

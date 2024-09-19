@@ -20,7 +20,7 @@ public class ExcelGenerator {
 
         workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Report");
-        if (!dataList.isEmpty() || optionalHeader) {
+        if (!optionalHeader && !dataList.isEmpty() ) {
             createHeaderRow(sheet, dataList.get(0).getColumns(), rowIndex - 1);
         }
         if(dataList.get(0).getProperties().isEmpty()){

@@ -22,7 +22,6 @@ public class DatabaseService {
         try (Connection connection = DriverManager.getConnection(url, username, password);
                 CallableStatement callableStatement = connection.prepareCall(call)) {
 
-
             // Set input parameters
             for (Map.Entry<Integer, Object> entry : inputParams.entrySet()) {
                 callableStatement.setObject(entry.getKey(), entry.getValue());
@@ -47,9 +46,9 @@ public class DatabaseService {
 
             // Map the output parameters to a DynamicObject
             // if (!outParams.isEmpty()) {
-            //     resultList.add(mapOutParamsToDynamicObject(callableStatement, outParams, columns));
+            // resultList.add(mapOutParamsToDynamicObject(callableStatement, outParams,
+            // columns));
             // }
-
 
         }
 
@@ -84,16 +83,63 @@ public class DatabaseService {
 
         while (resultSet.next()) {
             Map<String, Object> properties = new LinkedHashMap<>();
-            for (int i = 1; i <= columnCount; i++) {
-                String columnName = metaData.getColumnName(i);
-                String columnType = columns.get(columnName);
-                Object columnValue = resultSet.getObject(i);
+            for (int j = 0; j < columns.size(); j++) {
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    String columnType = columns.get(columnName);
+                    Object columnValue = resultSet.getObject(i);
 
-                // Perform type-specific operations if needed
-                if ("DATE".equals(columnType)) {
-                    columnValue = resultSet.getDate(i);
+                    // Perform type-specific operations if needed
+                    if ("DATE".equals(columnType)) {
+                        columnValue = resultSet.getDate(i);
+                    }
+
+                    // check null return ""
+                    if (columnValue == null) {
+                        columnValue = "";
+                    }
+
+                    // check column[j] key is equal to column name
+                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)){
+
+                        properties.put(columnName, columnValue);
+                    }
                 }
-                properties.put(columnName, columnValue);
+            }
+            resultList.add(new DynamicObject(properties, columns));
+        }
+        return resultList;
+    }
+    private List<DynamicObject> mapResultSetToDynamicObjectWithKey(ResultSet resultSet, Map<String, String> columns)
+            throws SQLException {
+        List<DynamicObject> resultList = new ArrayList<>();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
+        while (resultSet.next()) {
+            Map<String, Object> properties = new LinkedHashMap<>();
+            for (int j = 0; j < columns.size(); j++) {
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnName = metaData.getColumnName(i);
+                    String columnType = columns.get(columnName);
+                    Object columnValue = resultSet.getObject(i);
+
+                    // Perform type-specific operations if needed
+                    if ("DATE".equals(columnType)) {
+                        columnValue = resultSet.getDate(i);
+                    }
+
+                    // check null return ""
+                    if (columnValue == null) {
+                        columnValue = "";
+                    }
+
+                    // check column[j] key is equal to column name
+                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)){
+
+                        properties.put(columnName, columnValue);
+                    }
+                }
             }
             resultList.add(new DynamicObject(properties, columns));
         }
