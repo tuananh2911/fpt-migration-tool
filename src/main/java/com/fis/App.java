@@ -34,21 +34,26 @@ public final class App {
             }else{
                 branch.setFolderPath("/FTPData/" );
             }
-            ReportService.ISS009Report(branch);
-            ReportService.ISS010Report(branch);
-            ReportService.ISS011Report(branch);
-            ReportService.ISS012Report(branch);
-            ReportService.ACQ009Report(branch);
+            // ReportService.ISS009Report(branch);
+            // ReportService.ISS010Report(branch);
+            // ReportService.ISS011Report(branch);
+            // ReportService.ISS012Report(branch);
+            // ReportService.ISS013Report(branch);
+            // ReportService.ACQ009Report(branch);
 
         }
-        ReportService.ReportATM001();
-        ReportService.ATM002REPORT();
-        ReportService.GL005ISSReport();
-        ReportService.GL007Report();
-        ReportService.ISS0010();
-        ReportService.ISS0011();
-        ReportService.ISS002();
-        ReportService.ISS003();
-        ReportService.ISS005();
+        // ReportService.ATM001Report();
+        // ReportService.ATM002REPORT();
+        ReportService.ATM003REPORT();
+        // ReportService.GL005ISSReport();
+        // ReportService.GL007Report();
+        // ReportService.ISS0010Report();
+        // ReportService.ISS0011Report();
+        // ReportService.ISS002Report();
+        // ReportService.ISS003Report();
+        // ReportService.ISS005Report();
+        // ReportService.ISS006Report();
+        ReportService.ISS007Report();
+        ReportService.ISS008Report();
     }
 }
