@@ -915,12 +915,12 @@ public class ReportService {
         columns.put("branch", "CN PHT");
         columns.put("DATE_OPEN", "Ngày khai báo thông tin");
         columns.put("CLIENT_NUMBER", "CIF");
-        columns.put("name", "Tên doanh nghiệp");
+        columns.put("SHORT_NAME", "Tên doanh nghiệp");
         columns.put("REG_NUMBER", "Mã số ĐKKD của Doanh nghiệp");
         columns.put("fullname", "Tên người đại diện theo pháp luật");
         columns.put("TR_COMPANY_NAM", "Tên công ty được dập nổi trên thẻ");
-        columns.put("HMTD", "HMTD doanh nghiệp");
-        columns.put("CARD_NUMBER", "Số lượng thẻ TDDN");
+        columns.put("AUTH_LIMIT_AMOUNT", "HMTD doanh nghiệp");
+        columns.put("SL_THE_TIN_DUNG", "Số lượng thẻ TDDN");
         columns.put("Addre", "Địa chỉ DN");
         columns.put("E_MAIL", "Email DN");
         columns.put("V_CS_ALL_ACNT_STATUS.STATUS_TYPE_CODE", "Mã lãi suất");
@@ -928,10 +928,10 @@ public class ReportService {
         columns.put("fullname2", "Họ tên người liên hệ");
         columns.put("ADDRESS_LINE_2", "Phòng/Ban công tác của người liên hệ");
         columns.put("PHONE_M", "SĐT liên lạc");
-        columns.put("billing_date", "Ngày sao kê thẻ ");
-        columns.put("ADDRESS_LINE_3", "Tỷ lệ trích nợ tự động");
-        columns.put("ADDRESS_LINE_4", "Số tiền đk thanh toán tự động ");
-        columns.put("ADDRESS_LINE_1", "Số TK đăng ký trích nợ tự động");
+        columns.put("NGAY_SAO_KE_THE", "Ngày sao kê thẻ ");
+        columns.put("TY_LE_TRICH_NO_TU_DONG", "Tỷ lệ trích nợ tự động");
+        columns.put("SO_TIEN_DK_TT_TD", "Số tiền đk thanh toán tự động ");
+        columns.put("SO_TK_DK_TRICH_NO_TU_DONG", "Số TK đăng ký trích nợ tự động");
 
         dynamicObject.setColumns(columns);
 
@@ -1011,7 +1011,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM001Report() throws FileNotFoundException, IOException {
+    public static void ATM001REPORT() throws FileNotFoundException, IOException {
         System.out.println("Generating ATM001 Report");
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2159,7 +2159,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM003REPORT() throws FileNotFoundException, IOException {
+    public static void ATM003REPORT() throws FileNotFoundException, IOException, SQLException {
         System.out.println("Generating ATM003 Report");
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2167,30 +2167,31 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ATM_003_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("ATM_ID", "Terminal ID");
-        columns.put("ATM_NAME", "Branch quản lý");
-        columns.put("BRANCH", "Branch tiếp quỹ");
-        columns.put("ADDRESS", "Mã AM quản lý máy");
-        columns.put("CITY", "ATM TYPE");
-        columns.put("DISTRICT", "Hãng ATM");
-        columns.put("WARD", "Model");
-        columns.put("ATM_TYPE", "ATM location");
-        columns.put("ATM_MODEL", "Mệnh giá hộp tiền 1");
-        columns.put("ATM_STATUS", "Mệnh giá hộp tiền 2");
-        columns.put("ATM_STATUS_DATE", "Mệnh giá hộp tiền 3");
-        columns.put("ATM_STATUS_REASON", "Mệnh giá hộp tiền 4");
-        columns.put("ATM_STATUS_USER", "ATM group");
-        columns.put("ATM_STATUS_NOTE", "%Phí Visa off us nước ngoài");
-        columns.put("ATM_STATUS_TIME", "Phí visa off us nước ngoài Min");
-        columns.put("ATM_STATUS_USER_IP", "%Phí MC off us nước ngoài");
-        columns.put("ATM_STATUS_USER_MAC", "%Phí MC off us nước ngoài Min");
+        columns.put("CONTRACT_NUMBER", "Terminal ID");
+        columns.put("BRANCH", "Branch quản lý");
+        columns.put("BRANCH_TIEP_QUY", "Branch tiếp quỹ");
+        columns.put("MA_AM_QL_MAY", "Mã AM quản lý máy");
+        columns.put("ATM_TYPE", "ATM TYPE");
+        columns.put("BRAND", "Hãng ATM");
+        columns.put("MODEL", "Model");
+        columns.put("LOCATION", "ATM location");
+        columns.put("MENH_GIA_HOP_TIEN_1", "Mệnh giá hộp tiền 1");
+        columns.put("MENH_GIA_HOP_TIEN_2", "Mệnh giá hộp tiền 2");
+        columns.put("MENH_GIA_HOP_TIEN_3", "Mệnh giá hộp tiền 3");
+        columns.put("MENH_GIA_HOP_TIEN_4", "Mệnh giá hộp tiền 4");
+        columns.put("ATM_GROUP", "ATM group");
+        // columns.put("ATM_STATUS_NOTE", "%Phí Visa off us nước ngoài");
+        // columns.put("ATM_STATUS_TIME", "Phí visa off us nước ngoài Min");
+        // columns.put("ATM_STATUS_USER_IP", "%Phí MC off us nước ngoài");
+        // columns.put("ATM_STATUS_USER_MAC", "%Phí MC off us nước ngoài Min");
 
         dynamicObject.setColumns(columns);
 
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ATM_003", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -2200,7 +2201,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(3, dynamicObjects, false);
+        Sheet sheet = excelGenerator.generateExcel(5, dynamicObjects, false);
 
         // ma bao cao
         Row row1 = sheet.createRow(0);
@@ -2216,7 +2217,7 @@ public class ReportService {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 17));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, columns.size()));
 
         // no date
 
@@ -2371,7 +2372,7 @@ public class ReportService {
         }
 
         for (int i = 2; i < 11; i += 3) {
-            headerRow.getCell(i).setCellValue(header[i / 3+1]);
+            headerRow.getCell(i).setCellValue(header[i / 3 + 1]);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
@@ -2409,7 +2410,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0081Report() throws FileNotFoundException, IOException{
+    public static void ISS0081Report() throws FileNotFoundException, IOException {
         System.out.println("Generating ISS0081 Report");
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2500,7 +2501,7 @@ public class ReportService {
         row1.getCell(0).setCellStyle(styleBold);
         row2.getCell(0).setCellStyle(styleBold);
 
-        String[] header = {  "CN quản lý", "Số tài khoản thẻ", "Số tiền GD gốc", "Số kỳ đăng kí trả góp",
+        String[] header = { "CN quản lý", "Số tài khoản thẻ", "Số tiền GD gốc", "Số kỳ đăng kí trả góp",
                 "Gốc trả góp từng kỳ",
                 "Số kỳ đăng kí trả góp", "Gốc trả góp từng kỳ",
                 "Dư nợ trả góp chưa lên sao kê", "Ngày kết thúc",
@@ -2524,7 +2525,6 @@ public class ReportService {
         headerRow.getCell(0).setCellStyle(cellStyle);
         headerRow2.createCell(0).setCellValue("STT");
         headerRow2.getCell(0).setCellStyle(cellStyle);
-
 
         for (int i = 1; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
@@ -2553,7 +2553,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ007Report() throws FileNotFoundException, IOException{
+    public static void ACQ007Report() throws FileNotFoundException, IOException {
         System.out.println("Generating ACQ007 Report");
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2678,7 +2678,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ008Report() throws FileNotFoundException, IOException{
+    public static void ACQ008Report() throws FileNotFoundException, IOException {
         System.out.println("Generating AQC008 Report");
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2751,6 +2751,527 @@ public class ReportService {
 
         row1.getCell(0).setCellStyle(styleBold);
         row2.getCell(0).setCellStyle(styleBold);
+
+        excelGenerator.writeExcel(fileName);
+    }
+
+    public static void ACQ006Report() throws FileNotFoundException, IOException {
+        System.out.println("Generating ACQ006 Report");
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/ACQ_006_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+
+        // columns.put("0", "STT");
+        columns.put("1", "Cadencie");
+        columns.put("2", "Way4");
+        columns.put("3", "Way4");
+        columns.put("4", "MC");
+        columns.put("5", "MD");
+        columns.put("6", "VC");
+        columns.put("7", "VD");
+        columns.put("8", "JC");
+        columns.put("9", "JD");
+        columns.put("10", "PD");
+        columns.put("11", "PC");
+        columns.put("12", "ACI");
+        columns.put("13", "ACV");
+        columns.put("14", "ADI");
+        columns.put("15", "ADV");
+        columns.put("16", "API");
+        columns.put("17", "APV");
+        columns.put("18", "DCI");
+        columns.put("19", "DCV");
+        columns.put("20", "DDI");
+        columns.put("21", "DDV");
+        columns.put("22", "DPI");
+        columns.put("23", "DPV");
+        columns.put("24", "JCI");
+        columns.put("25", "JCO");
+        columns.put("26", "JCV");
+        columns.put("27", "JDI");
+        columns.put("28", "JDO");
+        columns.put("29", "JDV");
+        columns.put("30", "JPI");
+        columns.put("31", "JPV");
+        columns.put("32", "MCI");
+        columns.put("33", "MCO");
+        columns.put("34", "MCV");
+        columns.put("35", "MDI");
+        columns.put("36", "MDO");
+        columns.put("37", "MDV");
+        columns.put("38", "MPI");
+        columns.put("39", "MPV");
+        columns.put("40", "NCI");
+        columns.put("41", "NDI");
+        columns.put("42", "PCV");
+        columns.put("43", "PDO");
+        columns.put("44", "PDV");
+        columns.put("45", "UCI");
+        columns.put("46", "UCO");
+        columns.put("47", "UCV");
+        columns.put("48", "UDI");
+        columns.put("49", "UDO");
+        columns.put("50", "UDV");
+        columns.put("51", "UPI");
+        columns.put("52", "UPV");
+        columns.put("53", "VCI");
+        columns.put("54", "VCO");
+        columns.put("55", "VCV");
+        columns.put("56", "VDI");
+        columns.put("57", "VDO");
+        columns.put("58", "VDV");
+        columns.put("59", "VPI");
+        columns.put("60", "VPO");
+        columns.put("61", "VPV");
+        columns.put("62", "LDI");
+        columns.put("63", "CDI");
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+        List<DynamicObject> dynamicObjects = new ArrayList<>();
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "Báo cáo chi tiết phí MDR khai báo theo merchant (gắn personal tariff đến từng acnt_contract)");
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: ACQ_006");
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow2.createCell(0).setCellValue("TT");
+        headerRow.createCell(0).setCellStyle(cellStyle);
+        headerRow2.getCell(0).setCellStyle(cellStyle);
+
+        for (int i = 1; i < columns.size() + 1; i++) {
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            // resize column width
+            sheet.autoSizeColumn(i);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+        }
+
+        headerRow.getCell(1).setCellValue("Merchant ID");
+        headerRow.getCell(3).setCellValue("Contract number");
+        headerRow.getCell(4).setCellValue("Phí MDR VND CAD");
+        headerRow.getCell(12).setCellValue("Phí MDR VND Way4");
+
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 1, 2));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 4, 11));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 12, columns.size()));
+
+        excelGenerator.writeExcel(fileName);
+    }
+
+    public static void ACQ010Report(Branch branch) throws FileNotFoundException, IOException {
+        System.out.println("Generating ACQ010 Report");
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = branch.getFolderPath() + "ACQ_010_" + branch.getBranchCode() + "_" + branch.getBranchName()
+                + "_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+
+        columns.put("ACNT_CONTRACT.BRANCH", "CAD");
+        columns.put("x1", "Way4");
+        columns.put("x2", "CAD");
+        columns.put("x3", "Way4");
+        columns.put("ACNT_CONTRACT.PRODUCT", "Product");
+        columns.put("ACNT_CONTRACT.CONTRACT_NAME", "Main Contract name");
+        columns.put("ACNT_CONTRACT.CONTRACT_NUM", "Main Contract number");
+        columns.put("x4", "CAD");
+        columns.put("x5", "Way4");
+        columns.put("x6", "Sub Contract name");
+        columns.put("x7", "Sub Contract number");
+        columns.put("x8", "CAD");
+        columns.put("x9", "Way4");
+        columns.put("x10", "CAD");
+        columns.put("x11", "Way4");
+        columns.put("x12", "CAD");
+        columns.put("x13", "Way4");
+        columns.put("x14", "CAD");
+        columns.put("x15", "Way4");
+        columns.put("x16", "CAD");
+        columns.put("x17", "Way4");
+
+        columns.put("4", "MC");
+        columns.put("5", "MD");
+        columns.put("6", "VC");
+        columns.put("7", "VD");
+        columns.put("8", "JC");
+        columns.put("9", "JD");
+        columns.put("10", "PD");
+        columns.put("11", "PC");
+        columns.put("12", "ACI");
+        columns.put("13", "ACV");
+        columns.put("14", "ADI");
+        columns.put("15", "ADV");
+        columns.put("16", "API");
+        columns.put("17", "APV");
+        columns.put("18", "DCI");
+        columns.put("19", "DCV");
+        columns.put("20", "DDI");
+        columns.put("21", "DDV");
+        columns.put("22", "DPI");
+        columns.put("23", "DPV");
+        columns.put("24", "JCI");
+        columns.put("25", "JCO");
+        columns.put("26", "JCV");
+        columns.put("27", "JDI");
+        columns.put("28", "JDO");
+        columns.put("29", "JDV");
+        columns.put("30", "JPI");
+        columns.put("31", "JPV");
+        columns.put("32", "MCI");
+        columns.put("33", "MCO");
+        columns.put("34", "MCV");
+        columns.put("35", "MDI");
+        columns.put("36", "MDO");
+        columns.put("37", "MDV");
+        columns.put("38", "MPI");
+        columns.put("39", "MPV");
+        columns.put("40", "NCI");
+        columns.put("41", "NDI");
+        columns.put("42", "PCV");
+        columns.put("43", "PDO");
+        columns.put("44", "PDV");
+        columns.put("45", "UCI");
+        columns.put("46", "UCO");
+        columns.put("47", "UCV");
+        columns.put("48", "UDI");
+        columns.put("49", "UDO");
+        columns.put("50", "UDV");
+        columns.put("51", "UPI");
+        columns.put("52", "UPV");
+        columns.put("53", "VCI");
+        columns.put("54", "VCO");
+        columns.put("55", "VCV");
+        columns.put("56", "VDI");
+        columns.put("57", "VDO");
+        columns.put("58", "VDV");
+        columns.put("59", "VPI");
+        columns.put("60", "VPO");
+        columns.put("61", "VPV");
+        columns.put("62", "LDI");
+        columns.put("63", "CDI");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        inputParams.put(1, branch.getBranchCode());
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(2);
+        List<DynamicObject> dynamicObjects = new ArrayList<>();
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "Báo cáo chi tiết Đơn vị chấp nhận thẻ và POS sau chuyển đổi theo chi nhánh");
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: ACQ_010");
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Row row3 = sheet.createRow(3);
+        row3.createCell(0).setCellValue("Chi nhánh: " + branch.getBranchName());
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+        row3.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+
+        for (int i = 1; i < columns.size() + 1; i++) {
+            headerRow2.createCell(i).setCellStyle(cellStyle);
+            // resize column width
+            sheet.autoSizeColumn(i);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            // check columns value length <=3 then set value headerRow2
+            if (columns.values().toArray()[i - 1].toString().length() <= 4
+                    && !columns.values().toArray()[i - 1].toString().equalsIgnoreCase("MCC")
+                    && !columns.values().toArray()[i - 1].toString().equalsIgnoreCase("AM")) {
+                headerRow2.getCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            } else {
+                headerRow.getCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            }
+        }
+
+        headerRow.getCell(1).setCellValue("CN quản lý");
+        headerRow.getCell(3).setCellValue("Số Cif Khách hàng");
+        headerRow.getCell(8).setCellValue("Merchant ID (Main/ Ho)");
+        headerRow.getCell(12).setCellValue("Merchant ID (Sub)");
+        headerRow.getCell(14).setCellValue("Terminal ID");
+        headerRow.getCell(16).setCellValue("MCC");
+        headerRow.getCell(18).setCellValue("AM");
+        headerRow.getCell(20).setCellValue("RBS number");
+        headerRow.getCell(22).setCellValue("Phí MDR áp dụng VND - CAD");
+        headerRow.getCell(30).setCellValue("Phí MDR Way4");
+
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 1, 2));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 3, 4));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 8, 9));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 12, 13));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 14, 15));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 16, 17));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 18, 19));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 20, 21));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 22, 29));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 30, columns.size()));
+
+        excelGenerator.writeExcel(fileName);
+    }
+
+    public static void ACQ011Report() throws FileNotFoundException, IOException {
+        System.out.println("Generating ACQ011 Report");
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/ACQ_011_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("1", "IST");
+        columns.put("2", "IST");
+        columns.put("3", "IST");
+        columns.put("4", "IST");
+        columns.put("5", "IST");
+        columns.put("6", "IST");
+        columns.put("7", "WAY4");
+        columns.put("8", "Check (True/ False)");
+        columns.put("6", "IST");
+        columns.put("7", "WAY4");
+        columns.put("8", "Check (True/ False)");
+        columns.put("9", "IST");
+        columns.put("10", "WAY4");
+        columns.put("11", "Check (True/ False)");
+        columns.put("12", "IST");
+        columns.put("13", "WAY4");
+        columns.put("14", "Check (True/ False)");
+        columns.put("15", "IST");
+        columns.put("16", "WAY4");
+        columns.put("17", "Check (True/ False)");
+        columns.put("18", "IST");
+        columns.put("19", "WAY4");
+        columns.put("20", "Check (True/ False)");
+        columns.put("21", "IST");
+        columns.put("22", "WAY4");
+        columns.put("23", "Check (True/ False)");
+        columns.put("24", "IST");
+        columns.put("25", "WAY4");
+        columns.put("26", "Check (True/ False)");
+        columns.put("27", "SRN (Source Registration Number)");
+        columns.put("28", "Target channel");
+        columns.put("29", "Source channel");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+        List<DynamicObject> dynamicObjects = new ArrayList<>();
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "Báo cáo chi tiết Giao dịch preauth thẻ offus trên thiết bị BIDV");
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: ACQ_011");
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellValue("Nguồn dữ liệu");
+        headerRow2.getCell(0).setCellStyle(cellStyle);
+
+        for (int i = 1; i < columns.size() - 2; i++) {
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            // resize column width
+            sheet.autoSizeColumn(i);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+        }
+
+        for (int i = columns.size() - 2; i < columns.size() + 1; i++) {
+            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            sheet.autoSizeColumn(i);
+            headerRow.getCell(i).setCellStyle(cellStyle);
+        }
+        String[] header = { "MSGTYPE", "PCODE", "TXNDEST", "RESPCODE", "SHCERROR", "Transaction DATE",
+                "Target Number (PAN)", "RRN (Retrieval Reference Number)", "Auth Code", "Merchant ID", "Terminal ID",
+                "Transaction amount" };
+        for (int i = 1; i < 6; i++) {
+            sheet.autoSizeColumn(i);
+            headerRow.getCell(i).setCellValue(header[i - 1]);
+        }
+        for (int i = 6; i < 26; i += 3) {
+            headerRow.getCell(i).setCellValue(header[i / 3 + 3]);
+            sheet.autoSizeColumn(i);
+            sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
+        }
 
         excelGenerator.writeExcel(fileName);
     }
