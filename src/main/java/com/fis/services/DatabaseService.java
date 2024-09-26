@@ -6,9 +6,12 @@ import java.util.*;
 public class DatabaseService {
 
     // Oracle JDBC connection details
-    private final String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
-    private final String username = "dmreport";
-    private final String password = "Bidv@123456";
+    // private final String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
+    // private final String username = "dmreport";
+    // private final String password = "Bidv@123456";
+    private final String url = System.getenv("DB_URL");
+    private final String username = System.getenv("DB_USERNAME");
+    private final String password = System.getenv("DB_PASSWORD");
 
     // Method to dynamically call a stored procedure from an Oracle package and map
     // result to DynamicObject
