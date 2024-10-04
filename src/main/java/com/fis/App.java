@@ -28,8 +28,9 @@ public final class App {
      * @throws IOException
      * @throws FileNotFoundException
      * @throws SQLException
+     * @throws InterruptedException
      */
-    public static void main(String[] args) throws FileNotFoundException, IOException, SQLException {
+    public static void main(String[] args) throws FileNotFoundException, IOException, SQLException, InterruptedException {
         System.out.println("Start");
         List<Branch> ds = ExcelReaderService.readBranchExcel("ds_branch.xlsx");
         String[] reportClassName = {
@@ -38,7 +39,7 @@ public final class App {
                 // "ISS011Report",
                 // "ISS012Report",
                 // "ISS013Report",
-                "ACQ009Report",
+                // "ACQ009Report",
                 // "ACQ010Report",
         };
         // // no props
@@ -49,6 +50,7 @@ public final class App {
                 // "GL005ISSReport",
                 // "GL007Report",
                 // "ISS0010Report",
+                "ISS0011Report",
                 // "ISS011Report",
                 // "ISS002Report",
                 "ISS003Report",
@@ -65,7 +67,7 @@ public final class App {
                 // "ISS0041Report",
         };
 
-        // ExecutorService executor = Executors.newFixedThreadPool(reportClassName.length + reportHSCClassName.length);
+        ExecutorService executor = Executors.newFixedThreadPool(reportClassName.length + reportHSCClassName.length);
 
         // ProgressTracker progressTracker = new ProgressTracker(ds.size() * reportClassName.length);
         // for (Branch branch : ds) {
@@ -112,9 +114,10 @@ public final class App {
 
         // executor.shutdown();
         Branch branch1 = new Branch("215", "Chi Nhánh Cầu Giấy", "/FTPData/ChiNhanh/MienBac/CauGiay/NHAN/");
-        // ReportService.ACQ009Report(branch1);
-        // ReportService.ISS009Report(branch1);
+        // // ReportService.ACQ009Report(branch1);
+        // // ReportService.ISS009Report(branch1);
         ReportService.ISS011Report(branch1);
+        // ReportService.ACQ004Report();
         // ReportService.ISS012Report(branch1);
         System.out.println("End");
 

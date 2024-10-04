@@ -2,6 +2,7 @@ package com.fis.services;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,13 +18,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.fis.domain.Branch;
 
-import oracle.net.aso.q;
-
 public class ReportService {
 
     private static DatabaseService databaseService = new DatabaseService();
 
-    public static void CMS018Report() throws FileNotFoundException, IOException {
+    public static void CMS018Report() throws FileNotFoundException, IOException, InterruptedException {
         String fileName = "CMS018Report.xlsx";
 
         // new dynacmic object
@@ -122,7 +121,8 @@ public class ReportService {
 
     }
 
-    public static void ISS011Report(Branch branch) throws FileNotFoundException, IOException, SQLException {
+    public static void ISS011Report(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -190,10 +190,13 @@ public class ReportService {
         // }
         // });
         // }
-        // System.out.println(dynamicObjects.get(0).getProperties());
+        // System.out.println(dynamicObjects.size());
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
+        System.out.println("Start generate sheet");
         Sheet sheet = excelGenerator.generateExcel(6, dynamicObjects, false);
+        System.out.println("End generate sheet");
+
         // title row 0
         Row titleRow = sheet.createRow(0);
         titleRow.createCell(0)
@@ -240,12 +243,15 @@ public class ReportService {
         eRow.getCell(3).setCellStyle(styleBold);
         eRow.getCell(9).setCellStyle(styleBold);
         eRow.getCell(14).setCellStyle(styleBold);
-
+        System.out.println("Start write excel");
+        dynamicObjects=null;
+        System.out.println("Giải phóng xog");
         excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void ISS012Report(Branch branch) throws FileNotFoundException, IOException, SQLException {
+    public static void ISS012Report(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -317,7 +323,6 @@ public class ReportService {
         }
         // System.out.println(dynamicObjects.get(0).getProperties());
 
-
         ExcelGenerator excelGenerator = new ExcelGenerator();
         Sheet sheet = excelGenerator.generateExcel(6, dynamicObjects, false);
         // title row 0
@@ -372,7 +377,8 @@ public class ReportService {
 
     }
 
-    public static void ATM002REPORT() throws FileNotFoundException, IOException, SQLException {
+    public static void ATM002REPORT()
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -452,7 +458,8 @@ public class ReportService {
 
     }
 
-    public static void ACQ009Report(Branch branch) throws FileNotFoundException, IOException, SQLException {
+    public static void ACQ009Report(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -499,10 +506,10 @@ public class ReportService {
         // System.out.println(dynamicObjects.get(0).getProperties());
         // map dynamicObjects add properties value JD = "" if JD is null
         // for (DynamicObject dynamicObject2 : dynamicObjects) {
-        //     if (dynamicObject2.getProperties().get("JD") == null) {
-        //         dynamicObject2.getProperties().put("JD", "");
-        //     }
-        //     dynamicObject2.getProperties().put("1", "");
+        // if (dynamicObject2.getProperties().get("JD") == null) {
+        // dynamicObject2.getProperties().put("JD", "");
+        // }
+        // dynamicObject2.getProperties().put("1", "");
         // }
         ExcelGenerator excelGenerator = new ExcelGenerator();
         Sheet sheet = excelGenerator.generateExcel(8, dynamicObjects, true);
@@ -522,7 +529,7 @@ public class ReportService {
                 .setCellValue("Ngày báo cáo: " + dateFormat.format(date));
         Row branchRow = sheet.createRow(1); // Changed index from 0 to 1
         branchRow.createCell(4)
-                .setCellValue("Chi nhánh: "+ branch.getBranchCode());
+                .setCellValue("Chi nhánh: " + branch.getBranchCode());
         // font bold, size 16 for title
         Font font = sheet.getWorkbook().createFont();
         font.setBold(true);
@@ -592,7 +599,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL007Report() throws FileNotFoundException, IOException {
+    public static void GL007Report() throws FileNotFoundException, IOException, InterruptedException {
 
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
@@ -676,7 +683,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL005ISSReport() throws FileNotFoundException, IOException {
+    public static void GL005ISSReport() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -799,7 +806,8 @@ public class ReportService {
 
     }
 
-    public static void ISS009Report(Branch branch) throws FileNotFoundException, IOException, SQLException {
+    public static void ISS009Report(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -904,7 +912,8 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS010Report(Branch branch) throws FileNotFoundException, IOException, SQLException {
+    public static void ISS010Report(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1014,7 +1023,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM001REPORT() throws FileNotFoundException, IOException {
+    public static void ATM001REPORT() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1074,7 +1083,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0010Report() throws FileNotFoundException, IOException {
+    public static void ISS0010Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1194,7 +1203,8 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0011Report() throws FileNotFoundException, IOException {
+    public static void ISS0011Report()
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1202,26 +1212,35 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ISS_001_1_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("CIF.ZBOC", "BDS");
-        columns.put("CARD.PROFIL", "Product code");
-        columns.put("ACCT.ACCOUNT1", "Số lượng trên Cadencie");
-        columns.put("ACCT.ACCOUNT2", "Không chuyển đổi");
-        columns.put("ACCT.ACCOUNT3", "Chuyển đổi (Migration)");
-        columns.put("ACNT_CONTRACT.CONTRACT_NUMBER", "Cập nhật lên hệ thống Way4");
-        columns.put("7", "Chênh lệch");
-        columns.put("CARD.CARD_NBR1", "Số lượng thẻ trên Cadencie");
-        columns.put("CARD.CARD_NBR2", "Số lượng thẻ không CĐ");
-        columns.put("CARD.CARD_NBR3", "Số lượng thẻ CĐ");
-        columns.put("CARD_INFO.CARD_NUMBER", "Cập nhật lên W4");
-        columns.put("12", "Chênh lệch");
+        columns.put("branch", "BDS");
+        columns.put("PRODUCT_CAD", "Product code");
+        columns.put("account_all", "Số lượng trên Cadencie");
+        columns.put("account_khong_chuyen", "Không chuyển đổi");
+        columns.put("account_chuyen", "Chuyển đổi (Migration)");
+        columns.put("way4_account", "Cập nhật lên hệ thống Way4");
+        columns.put("chenh_lech_account", "Chênh lệch");
+        columns.put("card_all", "Số lượng thẻ trên Cadencie");
+        columns.put("card_khong_chuyen", "Số lượng thẻ không CĐ");
+        columns.put("card_chuyen", "Số lượng thẻ CĐ");
+        columns.put("way4_card", "Cập nhật lên W4");
+        columns.put("chenh_lech_card", "Chênh lệch");
 
         dynamicObject.setColumns(columns);
 
         // not fill properties for now
         dynamicObject.setProperties(new LinkedHashMap<>());
 
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
-        dynamicObjects.add(dynamicObject);
+        Map<Integer, Object> inputParams = new HashMap<>();
+
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_001_1", columns,
+                inputParams, outParams);
+
+        if (dynamicObjects.size() == 0) {
+            dynamicObjects.add(dynamicObject);
+        }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
         Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
@@ -1267,7 +1286,7 @@ public class ReportService {
         headerRow2.getCell(2).setCellStyle(cellStyle);
         headerRow.getCell(0).setCellStyle(cellStyle);
 
-        for (int i = 3; i < columns.size(); i++) {
+        for (int i = 3; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow.getCell(i).setCellValue("Chuyển đổi Tài khoản thẻ");
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
@@ -1277,16 +1296,47 @@ public class ReportService {
 
         // row sum after data
         Row sumRow = sheet.createRow(7 + dynamicObjects.size());
+        BigDecimal sum3 = new BigDecimal(0);
+        BigDecimal sum6 = new BigDecimal(0);
+        BigDecimal sum7 = new BigDecimal(0);
+        BigDecimal sum8 = new BigDecimal(0);
+        BigDecimal sum9 = new BigDecimal(0);
+
+        // sum if value is number
+        for (DynamicObject dynamicObject2 : dynamicObjects) {
+            if (dynamicObject2.getProperties().get("account_all") != null
+                    && dynamicObject2.getProperties().get("account_all") instanceof BigDecimal) {
+                sum3 = sum3.add((BigDecimal) dynamicObject2.getProperties().get("account_all"));
+            }
+            if (dynamicObject2.getProperties().get("way4_account") != null
+                    && dynamicObject2.getProperties().get("way4_account") instanceof BigDecimal) {
+                sum6 = sum6.add((BigDecimal) dynamicObject2.getProperties().get("way4_account"));
+            }
+            if (dynamicObject2.getProperties().get("chenh_lech_account") != null
+                    && dynamicObject2.getProperties().get("chenh_lech_account") instanceof BigDecimal) {
+                sum7 = sum7.add((BigDecimal) dynamicObject2.getProperties().get("chenh_lech_account"));
+            }
+            if (dynamicObject2.getProperties().get("card_all") != null
+                    && dynamicObject2.getProperties().get("card_all") instanceof BigDecimal) {
+                sum8 = sum8.add((BigDecimal) dynamicObject2.getProperties().get("card_all"));
+            }
+            if (dynamicObject2.getProperties().get("card_khong_chuyen") != null
+                    && dynamicObject2.getProperties().get("card_khong_chuyen") instanceof BigDecimal) {
+                sum9 = sum9.add((BigDecimal) dynamicObject2.getProperties().get("card_khong_chuyen"));
+
+            }
+        }
+
         sumRow.createCell(0).setCellValue("SUM");
 
-        sumRow.createCell(3).setCellValue("***");
-        sumRow.createCell(6).setCellValue("***");
-        sumRow.createCell(7).setCellValue("***");
-        sumRow.createCell(8).setCellValue("***");
-        sumRow.createCell(9).setCellValue("***");
+        sumRow.createCell(3).setCellValue(sum3.doubleValue());
+        sumRow.createCell(6).setCellValue(sum6.doubleValue());
+        sumRow.createCell(7).setCellValue(sum7.doubleValue());
+        sumRow.createCell(8).setCellValue(sum8.doubleValue());
+        sumRow.createCell(9).setCellValue(sum9.doubleValue());
 
         // merge cell for header
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 3, 11));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 3, 12));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 2, 2));
@@ -1297,7 +1347,8 @@ public class ReportService {
         styleBold.setFont(fontBold);
 
         int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
+        Row eRow = sheet.createRow(
+                endRow);
         eRow.createCell(0).setCellValue("LẬP BẢNG");
         eRow.createCell(4).setCellValue("NGƯỜI KIỂM SOÁT");
 
@@ -1307,7 +1358,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0012Report() throws FileNotFoundException, IOException {
+    public static void ISS0012Report() throws FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -1457,7 +1508,7 @@ public class ReportService {
 
     }
 
-    public static void ISS002Report() throws FileNotFoundException, IOException {
+    public static void ISS002Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1609,7 +1660,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS005Report() throws SQLException, FileNotFoundException, IOException {
+    public static void ISS005Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1664,8 +1715,9 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        // List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_005", columns,
-        //         inputParams, outParams);
+        // List<DynamicObject> dynamicObjects =
+        // databaseService.callProcedure("REPORT_MIGRATE", "ISS_005", columns,
+        // inputParams, outParams);
 
         List<DynamicObject> dynamicObjects = new ArrayList<>();
 
@@ -1787,7 +1839,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS003Report() throws SQLException, FileNotFoundException, IOException {
+    public static void ISS003Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1946,7 +1998,8 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS013Report(Branch branch) throws SQLException, FileNotFoundException, IOException {
+    public static void ISS013Report(Branch branch)
+            throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1998,9 +2051,8 @@ public class ReportService {
         inputParams.put(1, branch.getBranchCode());
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
-        List<DynamicObject> dynamicObjects =
-        databaseService.callProcedure("REPORT_MIGRATE", "ISS_013", columns,
-        inputParams, outParams);
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_013", columns,
+                inputParams, outParams);
         // List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -2068,7 +2120,7 @@ public class ReportService {
 
     }
 
-    public static void ISS006Report() throws FileNotFoundException, IOException {
+    public static void ISS006Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2178,7 +2230,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS007Report() throws FileNotFoundException, IOException {
+    public static void ISS007Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2314,7 +2366,8 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM003REPORT() throws FileNotFoundException, IOException, SQLException {
+    public static void ATM003REPORT()
+            throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2380,7 +2433,7 @@ public class ReportService {
 
     }
 
-    public static void ISS008Report() throws FileNotFoundException, IOException {
+    public static void ISS008Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2565,7 +2618,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0081Report() throws FileNotFoundException, IOException {
+    public static void ISS0081Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2708,7 +2761,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ007Report() throws FileNotFoundException, IOException {
+    public static void ACQ007Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2833,7 +2886,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ008Report() throws FileNotFoundException, IOException {
+    public static void ACQ008Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2910,7 +2963,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ006Report() throws FileNotFoundException, IOException {
+    public static void ACQ006Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3076,7 +3129,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ010Report(Branch branch) throws FileNotFoundException, IOException {
+    public static void ACQ010Report(Branch branch) throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3287,7 +3340,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ011Report() throws FileNotFoundException, IOException {
+    public static void ACQ011Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3431,7 +3484,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ001Report() throws FileNotFoundException, IOException {
+    public static void ACQ001Report() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3557,7 +3610,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0041Report() throws FileNotFoundException, IOException {
+    public static void ISS0041Report() throws FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -3729,13 +3782,13 @@ public class ReportService {
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
-        sheet.addMergedRegion(new CellRangeAddress(5,6,0,0));
-        sheet.addMergedRegion(new CellRangeAddress(5,6,1,1));
+        sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
+        sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
 
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS004Report() throws FileNotFoundException, IOException{
+    public static void ISS004Report() throws FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -3897,7 +3950,11 @@ public class ReportService {
         headerRow.getCell(0).setCellStyle(cellStyle);
         headerRow2.createCell(0).setCellStyle(cellStyle);
 
-        String[] header = {"Số tài khoản thẻ","Tên tài khoản thẻ","Số CIF","Tên KH","CN quản lý","Mã sản phẩm","Ngày mở","Mã CB giới thiệu","Mã AM","Trạng thái TK - Reason","Feemonth","Mức phí TN","Fee delay","Delay until active date","Class Code","Interest code","Mã chính sách cấp tín dụng","HMTD","Ngày sao kê","TK trích nợ tự động","Tỷ lệ trích nợ tự động","ID TSĐB","HMTD tạm thời","Ngày hết hạn HMTD tạm thời","Số lượng GD trả góp còn hoạt động (trạng thái Active,  N- New)"};
+        String[] header = { "Số tài khoản thẻ", "Tên tài khoản thẻ", "Số CIF", "Tên KH", "CN quản lý", "Mã sản phẩm",
+                "Ngày mở", "Mã CB giới thiệu", "Mã AM", "Trạng thái TK - Reason", "Feemonth", "Mức phí TN", "Fee delay",
+                "Delay until active date", "Class Code", "Interest code", "Mã chính sách cấp tín dụng", "HMTD",
+                "Ngày sao kê", "TK trích nợ tự động", "Tỷ lệ trích nợ tự động", "ID TSĐB", "HMTD tạm thời",
+                "Ngày hết hạn HMTD tạm thời", "Số lượng GD trả góp còn hoạt động (trạng thái Active,  N- New)" };
 
         for (int i = 1; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
@@ -3922,8 +3979,185 @@ public class ReportService {
         eRow.getCell(9).setCellStyle(styleBold);
         eRow.getCell(14).setCellStyle(styleBold);
 
-
         excelGenerator.writeExcel(fileName);
 
+    }
+
+    public static void ACQ004Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/ACQ_004_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("STT", "STT");
+        columns.put("cn_quan_ly_cad", "CAD");
+        columns.put("cn_quan_ly_way4", "Way4");
+        columns.put("SS_cn_quan_ly", "Check(True/ False)");
+        columns.put("merchant_id_cad", "CAD");
+        columns.put("merchant_id_way4", "Way4");
+        columns.put("SS_merchant_id", "Check(True/ False)");
+        columns.put("contract_name_way4", "Way4");
+        columns.put("contract_number_way4", "Way4");
+        columns.put("product_way4", "Way4");
+        columns.put("merchant_main_cad", "CAD");
+        columns.put("merchant_main_way4", "Way4");
+        columns.put("SS_merchant_main", "Check(True/ False)");
+        columns.put("merchant_lien_ket_cad", "CAD");
+        columns.put("merchant_lien_ket_way4", "Way4");
+        columns.put("SS_merchant_lien_ket", "Check(True/ False)");
+        columns.put("cif_cad", "CAD");
+        columns.put("cif_way4", "Way4");
+        columns.put("SS_cif", "Check(True/ False)");
+        columns.put("mcc_nguon_chuyen_doi", "CAD");
+        columns.put("mcc_sau_chuyen_doi", "Way4");
+        columns.put("SS_mcc", "Check(True/ False)");
+        columns.put("status_nguon_chuyen_doi", "CAD");
+        columns.put("status_sau_chuyen_doi", "Way4");
+        columns.put("SS_status", "Check(True/ False)");
+        columns.put("rbs_1_nguon_chuyen_doi", "CAD");
+        columns.put("rbs_1_sau_chuyen_doi", "Way4");
+        columns.put("SS_rbs", "Check(True/ False)");
+        columns.put("rbs_2_nguon_chuyen_doi", "CAD");
+        columns.put("rbs_2_sau_chuyen_doi", "Way4");
+        columns.put("SS_rbs_2", "Check(True/ False)");
+        columns.put("classifier_MMSTAR", "Way4");
+        columns.put("classifier_MMDP", "Way4");
+        columns.put("classifier_MDR_fee", "Way4");
+        columns.put("classifier_add_info_01", "Way4");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_004", columns,
+                inputParams, outParams);
+
+        System.out.println(dynamicObjects.get(0).getProperties());
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "Báo cáo đối chiếu thông tin merchant sau chuyển đổi theo cif khách hàng");
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: ACQ_004");
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("TT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+        headerRow2.getCell(0).setCellValue("Nguồn dữ liệu");
+
+        for (int i = 1; i < 7; i++) {
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+        }
+
+        for (int i = 7; i < 10; i++) {
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+        }
+        for (int i = 10; i < columns.size() - 3; i++) {
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+        }
+        for (int i = columns.size() - 4; i < columns.size(); i++) {
+            headerRow.createCell(i).setCellStyle(cellStyle);
+            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+        }
+        headerRow.getCell(1).setCellValue("CN quản lý");
+        headerRow.getCell(4).setCellValue("Merchant ID");
+        headerRow.getCell(7).setCellValue("Contract name (tên đơn vị CNT)");
+        headerRow.getCell(8).setCellValue("Contract number (cấp mid)");
+        headerRow.getCell(9).setCellValue("Product (name)");
+        headerRow.getCell(10).setCellValue("Merchant main ID");
+        headerRow.getCell(13).setCellValue("Merchant chuỗi liên kết (Add_info_03)");
+        headerRow.getCell(16).setCellValue("Số Cif Khách hàng");
+        headerRow.getCell(19).setCellValue("MCC");
+        headerRow.getCell(22).setCellValue("Status");
+        headerRow.getCell(25).setCellValue("RBS number 1");
+        headerRow.getCell(28).setCellValue("RBS number 2");
+        headerRow.getCell(31).setCellValue("MMSTAR");
+        headerRow.getCell(32).setCellValue("MMDP");
+        headerRow.getCell(33).setCellValue("MDR fee");
+        headerRow.getCell(34).setCellValue("Add_info_01");
+
+        Row _headerRow = sheet.createRow(4);
+        _headerRow.createCell(31).setCellValue("Classifier");
+        _headerRow.getCell(31).setCellStyle(cellStyle);
+        _headerRow.createCell(32).setCellStyle(cellStyle);
+        _headerRow.createCell(33).setCellStyle(cellStyle);
+
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 1, 3));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 4, 6));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 10, 12));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 13, 15));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 16, 18));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 19, 21));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 22, 24));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 25, 27));
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 28, 30));
+        sheet.addMergedRegion(new CellRangeAddress(4, 4, 31, 33));
+
+        excelGenerator.writeExcel(fileName);
     }
 }

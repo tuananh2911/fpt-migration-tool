@@ -16,14 +16,15 @@ public class ExcelGenerator {
     public ExcelGenerator() {
     }
 
-    public Sheet generateExcel( int rowIndex, List<DynamicObject> dataList,Boolean optionalHeader) throws FileNotFoundException, IOException {
+    public Sheet generateExcel(int rowIndex, List<DynamicObject> dataList, Boolean optionalHeader)
+            throws FileNotFoundException, IOException, InterruptedException {
 
         workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Report");
-        if (!optionalHeader && !dataList.isEmpty() ) {
+        if (!optionalHeader && !dataList.isEmpty()) {
             createHeaderRow(sheet, dataList.get(0).getColumns(), rowIndex - 1);
         }
-        if(dataList.get(0).getProperties().isEmpty()){
+        if (dataList.get(0).getProperties().isEmpty()) {
             return sheet;
         }
         CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
@@ -33,20 +34,30 @@ public class ExcelGenerator {
         cellStyle.setBorderLeft(BorderStyle.THIN);
         int _rowIndex = rowIndex;
         int stt = 1;
+
+        // System.out.println("Start autosize");
+        // for (int i = 0; i < dataList.get(0).getProperties().size(); i++) {
+        //     System.out.println("autosize column " + i);
+        //     sheet.autoSizeColumn(i);
+        // }
+        // System.out.println("End autosize");
+
         for (DynamicObject dynamicObject : dataList) {
+            System.out.println(stt);
+            System.out.println(dynamicObject.getProperties());
             Row row = sheet.createRow(_rowIndex++);
             row.createCell(0).setCellValue(stt++);
             row.getCell(0).setCellStyle(cellStyle);
             populateRowWithObjectData(row, dynamicObject.getProperties(), cellStyle);
-        }
-        for (int i = 0; i < dataList.get(0).getProperties().size(); i++) {
-            sheet.autoSizeColumn(i);
+            if (stt > dataList.size() -1000) {
+                Thread.sleep(200);
+            }
         }
         return sheet;
         // try (FileOutputStream fos = new FileOutputStream(fileName)) {
-        //     workbook.write(fos);
+        // workbook.write(fos);
         // } finally {
-        //     workbook.close();
+        // workbook.close();
         // }
 
     }
@@ -92,7 +103,7 @@ public class ExcelGenerator {
         }
     }
 
-    private void populateRowWithObjectData(Row row, Map<String, Object> properties,CellStyle cellStyle) {
+    private void populateRowWithObjectData(Row row, Map<String, Object> properties, CellStyle cellStyle) {
         int colIndex = 1;
         for (Object value : properties.values()) {
             Cell cell = row.createCell(colIndex++);
