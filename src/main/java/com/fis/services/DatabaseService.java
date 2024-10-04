@@ -6,12 +6,12 @@ import java.util.*;
 public class DatabaseService {
 
     // Oracle JDBC connection details
-    // private final String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
-    // private final String username = "dmreport";
-    // private final String password = "Bidv@123456";
-    private final String url = System.getenv("DB_URL");
-    private final String username = System.getenv("DB_USERNAME");
-    private final String password = System.getenv("DB_PASSWORD");
+    private final String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
+    private final String username = "dmreport";
+    private final String password = "Bidv@123456";
+    // private final String url = System.getenv("DB_URL");
+    // private final String username = System.getenv("DB_USERNAME");
+    // private final String password = System.getenv("DB_PASSWORD");
 
     // Method to dynamically call a stored procedure from an Oracle package and map
     // result to DynamicObject
@@ -22,8 +22,10 @@ public class DatabaseService {
         // Build the SQL call string dynamically based on the number of parameters
         String call = buildProcedureCall(packageName, procedureName, inputParams.size(), outParams.size());
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-                CallableStatement callableStatement = connection.prepareCall(call)) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            CallableStatement callableStatement = connection.prepareCall(call);
 
             // Set input parameters
             for (Map.Entry<Integer, Object> entry : inputParams.entrySet()) {
@@ -53,11 +55,16 @@ public class DatabaseService {
             // columns));
             // }
 
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            connection.close();
         }
 
         return resultList;
     }
-
+    // 30-9-2024 vietnq
     // Helper method to dynamically build the procedure call
     private String buildProcedureCall(String packageName, String procedureName, int inputParamCount,
             int outputParamCount) {
@@ -72,11 +79,11 @@ public class DatabaseService {
             sb.append("?");
         }
         sb.append(")}");
-        System.out.println(sb.toString());
 
         return sb.toString();
     }
 
+    // 30-9-2024 vietnq
     // Helper method to map the result set to a list of DynamicObjects
     private List<DynamicObject> mapResultSetToDynamicObject(ResultSet resultSet, Map<String, String> columns)
             throws SQLException {
@@ -86,6 +93,14 @@ public class DatabaseService {
 
         while (resultSet.next()) {
             Map<String, Object> properties = new LinkedHashMap<>();
+            // for each key in columns init properties with key and value = ""
+            for (String key : columns.keySet()) {
+                if(key.equalsIgnoreCase("STT") || key.equalsIgnoreCase("TT")){
+                    continue;
+                }
+                properties.put(key, "");
+            }
+
             for (int j = 0; j < columns.size(); j++) {
                 for (int i = 1; i <= columnCount; i++) {
                     String columnName = metaData.getColumnName(i);
@@ -103,9 +118,9 @@ public class DatabaseService {
                     }
 
                     // check column[j] key is equal to column name
-                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)){
+                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)) {
 
-                        properties.put(columnName, columnValue);
+                        properties.put(columns.keySet().toArray()[j].toString(), columnValue);
                     }
                 }
             }
@@ -113,6 +128,7 @@ public class DatabaseService {
         }
         return resultList;
     }
+
     private List<DynamicObject> mapResultSetToDynamicObjectWithKey(ResultSet resultSet, Map<String, String> columns)
             throws SQLException {
         List<DynamicObject> resultList = new ArrayList<>();
@@ -138,7 +154,7 @@ public class DatabaseService {
                     }
 
                     // check column[j] key is equal to column name
-                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)){
+                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)) {
 
                         properties.put(columnName, columnValue);
                     }
