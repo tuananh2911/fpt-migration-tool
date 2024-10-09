@@ -49,9 +49,9 @@ public class ExcelGenerator {
             row.createCell(0).setCellValue(stt++);
             row.getCell(0).setCellStyle(cellStyle);
             populateRowWithObjectData(row, dynamicObject.getProperties(), cellStyle);
-            if (stt > dataList.size() -1000) {
-                Thread.sleep(200);
-            }
+            // if (stt > dataList.size() -10000) {
+            //     Thread.sleep(200);
+            // }
         }
         return sheet;
         // try (FileOutputStream fos = new FileOutputStream(fileName)) {
@@ -73,7 +73,10 @@ public class ExcelGenerator {
         }
         try (FileOutputStream fos = new FileOutputStream(fileName)) {
             workbook.write(fos);
-        } finally {
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        finally {
             workbook.close();
         }
     }
@@ -95,9 +98,11 @@ public class ExcelGenerator {
 
         headerRow.createCell(0).setCellValue("STT");
         headerRow.getCell(0).setCellStyle(cellStyle);
+        sheet.autoSizeColumn(0);
         int colIndex = 1;
         for (String columnName : columns.values()) {
             Cell cell = headerRow.createCell(colIndex++);
+            sheet.autoSizeColumn(colIndex);
             cell.setCellValue(columnName);
             cell.setCellStyle(cellStyle);
         }

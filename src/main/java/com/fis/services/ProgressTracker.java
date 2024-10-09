@@ -29,4 +29,8 @@ public class ProgressTracker {
         progressBar.append("]");
         return progressBar.toString();
     }
+
+    public synchronized boolean isFinished() {
+        return completedTasks == totalTasks;
+    }
 }
