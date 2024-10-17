@@ -13,6 +13,25 @@ public class DatabaseService {
     // private final String username = System.getenv("DB_USERNAME");
     // private final String password = System.getenv("DB_PASSWORD");
 
+    public void initData(String packageName, String procedureName) {
+        // call procedure
+        String call = "{call " + packageName + "." + procedureName + "}";
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(url, username, password);
+            CallableStatement callableStatement = connection.prepareCall(call);
+            callableStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     // Method to dynamically call a stored procedure from an Oracle package and map
     // result to DynamicObject
     public List<DynamicObject> callProcedure(String packageName, String procedureName, Map<String, String> columns,
@@ -55,15 +74,15 @@ public class DatabaseService {
             // columns));
             // }
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             connection.close();
         }
 
         return resultList;
     }
+
     // 30-9-2024 vietnq
     // Helper method to dynamically build the procedure call
     private String buildProcedureCall(String packageName, String procedureName, int inputParamCount,
@@ -95,7 +114,7 @@ public class DatabaseService {
             Map<String, Object> properties = new LinkedHashMap<>();
             // for each key in columns init properties with key and value = ""
             for (String key : columns.keySet()) {
-                if(key.equalsIgnoreCase("STT") || key.equalsIgnoreCase("TT")){
+                if (key.equalsIgnoreCase("STT") || key.equalsIgnoreCase("TT")) {
                     continue;
                 }
                 properties.put(key, "");

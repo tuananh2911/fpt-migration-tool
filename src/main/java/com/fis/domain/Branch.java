@@ -4,14 +4,16 @@ public class Branch {
     private String branchCode;
     private String branchName;
     private String folderPath;
+    private String[] reports;
 
     public Branch() {
     }
 
-    public Branch(String branchCode, String branchName, String folderPath) {
+    public Branch(String branchCode, String branchName, String folderPath, String[] reports) {
         this.branchCode = branchCode;
         this.branchName = branchName;
         this.folderPath = folderPath;
+        this.reports = reports;
     }
 
     public String getBranchCode() {
@@ -38,13 +40,18 @@ public class Branch {
         this.folderPath = folderPath;
     }
 
+    public String[] getReports() {
+        return reports;
+    }
+
+    public void setReports(String[] reports) {
+        this.reports = reports;
+    }
+
     @Override
     public String toString() {
-        return "Branch{" +
-                "branchCode='" + branchCode + '\'' +
-                ", branchName='" + branchName + '\'' +
-                ", folderPath='" + folderPath + '\'' +
-                '}';
+        return "Branch [branchCode=" + branchCode + ", branchName=" + branchName + ", folderPath=" + folderPath
+                + ", reports=" + reports + "]";
     }
 
 }

@@ -37,41 +37,45 @@ public final class App {
         // System.out.println("Start");
         List<Branch> ds = ExcelReaderService.readBranchExcel("ds_branch.xlsx");
         String[] reportClassName = {
-                "ISS009Report",
-                "ISS010Report",
-                "ISS011Report",
-                "ISS012Report",
-                // "ISS013Report",
-                "ACQ009Report",
-                // "ACQ010Report",
+                "ISS_009",
+                "ISS_010",
+                "ISS_011",
+                "ISS_012",
+                "ISS_013",
+                "ACQ_009",
+                "ACQ_010",
         };
         // // no props
         String[] reportHSCClassName = {
-                "ATM001REPORT",
-                "ATM002REPORT",
-                "ATM003REPORT",
-                // "GL005ISSReport",
-                // "GL007Report",
-                "ISS0010Report",
-                "ISS0011Report",
-                "ISS0012Report",
-                // "ISS011Report",
-                // "ISS002Report",
-                // "ISS003Report",
-                // "ISS005Report",
-                // "ISS006Report",
-                // "ISS007Report",
-                // "ISS0081Report",
-                // "ACQ001Report",
-                // "ACQ002Report",
-                "ACQ004Report",
-                "ACQ006Report",
-                "ACQ007Report",
-                // "ACQ008Report",
-                // "ACQ011Report",
-                // "ISS0012Report",
-                // "ISS0041Report",
+                "ATM_001",
+                "ATM_002",
+                "ATM_003",
+                // "GL_007",
+                "ISS_001_0",
+                "ISS_001_1",
+                "ISS_001_2",
+                "ISS_002",
+                "ISS_003",
+                // "ISS_004",
+                "ISS_004_1",
+                "ISS_005",
+                "ISS_006",
+                // "ISS_007",
+                // "ISS_008_1",
+                "ACQ_001",
+                "ACQ_002",
+                "ACQ_003",
+                "ACQ_004",
+                "ACQ_005",
+                "ACQ_006",
+                "ACQ_007",
+                "ACQ_008",
+                "GL_005_ISS_CT",
+                "ACQ_011",
         };
+        System.out.println("Init data");
+        // ReportService.initData();
+        System.out.println("Init data done");
 
         ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(thread_num.trim()));
 
@@ -84,6 +88,31 @@ public final class App {
                 branch.setFolderPath(folderPath);
             } else {
                 branch.setFolderPath("/FTPData/");
+            }
+
+            if(branch.getReports() != null && branch.getReports().length != 0){
+                for (String report : branch.getReports()) {
+                    executor.execute(() -> {
+                        long startTime = System.currentTimeMillis();
+                        try {
+                            System.out.println("Thread " + Thread.currentThread().getId() + " "
+                                    + Thread.currentThread().getName() + " is working on " + report + " - "
+                                    + branch.getBranchCode() + " - " + branch.getBranchName());
+                            ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
+                            Thread.sleep(50);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            long endTime = System.currentTimeMillis();
+                            progressTracker.taskCompleted();
+                            System.out.println("Thread " + Thread.currentThread().getId() + " "
+                                    + Thread.currentThread().getName() + " finished working on " + report + " - "
+                                    + branch.getBranchCode() + " - " + branch.getBranchName()
+                                    + " (Duration: " + (endTime - startTime) + " ms)");
+                        }
+                    });
+                }
+                continue;
             }
 
             for (String report : reportClassName) {
@@ -148,51 +177,25 @@ public final class App {
         }
 
         executor.shutdown();
-        // Branch branch1 = new Branch("215", "Chi Nhánh Cầu Giấy",
-        // "/FTPData/ChiNhanh/MienBac/CauGiay/NHAN/");
-        // // ReportService.ACQ009Report(branch1);
-        // // ReportService.ISS009Report(branch1);
-        // ReportService.ISS011Report(branch1);
-        // ReportService.ACQ004Report();
-        // ReportService.ACQ002Report();
-        // ReportService.ACQ005Report();
-        // ReportService.ISS012Report(branch1);
-        // ReportService.GL005ISSReport();
+        // Branch branch1 = new Branch("120", "Chi Nhánh Sở Giao dịch 1","/FTPData/ChiNhanh/MienBac/SGD1/NHAN/");
+        // ReportService.ACQ_009(branch1);
+        // // ReportService.ISS_009(branch1);
+        // ReportService.ISS_011(branch1);
+        // ReportService.ISS_004_1();
+        // ReportService.ACQ_004();
+        // ReportService.ACQ_003();
+        // ReportService.ACQ_001();
+        // ReportService.ACQ_002();
+        // ReportService.ACQ_005();
+        // ReportService.ACQ_007();
+        // ReportService.ACQ_008();
+        // ReportService.ISS_012(branch1);
+        // ReportService.ATM_001();
+        // ReportService.ATM_002();
+        // ReportService.GL_005_ISS_CT();
+        // ReportService.ATM_003();
+        // ReportService.ACQ_011();
+        // ReportService.ISS_001_1();
         // System.out.println("End");
-
-        // for (Branch branch : ds) {
-        // String folderPath = branch.getFolderPath();
-        // if (folderPath.contains("/FTPData")) {
-        // folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
-        // branch.setFolderPath(folderPath);
-        // } else {
-        // branch.setFolderPath("/FTPData/");
-        // }
-        // ReportService.ISS009Report(branch);
-        // ReportService.ISS010Report(branch);
-        // ReportService.ISS011Report(branch);
-        // ReportService.ISS012Report(branch);
-        // ReportService.ISS013Report(branch);
-        // ReportService.ACQ009Report(branch);
-        // ReportService.ACQ010Report(branch);
-        // }
-        // ReportService.ATM001REPORT();
-        // ReportService.ATM002REPORT();
-        // ReportService.ATM003REPORT();
-        // ReportService.GL005ISSReport();
-        // ReportService.GL007Report();
-        // ReportService.ISS0010Report();
-        // ReportService.ISS0011Report();
-        // ReportService.ISS002Report();
-        // ReportService.ISS003Report();
-        // ReportService.ISS005Report();
-        // ReportService.ISS006Report();
-        // ReportService.ISS007Report();
-        // ReportService.ISS0081Report();
-        // ReportService.ACQ001Report();
-        // ReportService.ACQ006Report();
-        // ReportService.ACQ007Report();
-        // ReportService.ACQ008Report();
-        // ReportService.ACQ011Report();
     }
 }

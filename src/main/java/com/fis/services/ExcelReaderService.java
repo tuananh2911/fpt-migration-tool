@@ -18,7 +18,7 @@ public class ExcelReaderService {
         List<Branch> branches = new ArrayList<>();
 
         try (FileInputStream fis = new FileInputStream(new File(excelFilePath));
-             Workbook workbook = new XSSFWorkbook(fis)) {
+                Workbook workbook = new XSSFWorkbook(fis)) {
 
             // Assuming data is on the first sheet
             Sheet sheet = workbook.getSheetAt(0);
@@ -26,15 +26,21 @@ public class ExcelReaderService {
             // Iterate over the rows, skipping the header row (starting at row 1)
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
-
-                if (row != null) {
+                // Check if the row is not empty and Collumn M is not 0
+                if (row != null && !getCellValueAsString(row.getCell(12)).equalsIgnoreCase("0")) {
                     // Read each cell for branchCode, branchName, and folderPath
-                    String branchCode = getCellValueAsString(row.getCell(5));  // Column F
-                    String branchName = getCellValueAsString(row.getCell(4));  // Column E
-                    String folderPath = getCellValueAsString(row.getCell(11));  // Column L
+                    String branchCode = getCellValueAsString(row.getCell(5)); // Column F
+                    String branchName = getCellValueAsString(row.getCell(4)); // Column E
+                    String folderPath = getCellValueAsString(row.getCell(11)); // Column L
+                    String[] reports; // Column N
+                    if (!getCellValueAsString(row.getCell(13)).contains(";")) {
+                        reports = new String[0];
+                    } else {
+                        reports = getCellValueAsString(row.getCell(13)).split(";");
+                    }
 
                     // Create Branch object and add to list
-                    Branch branch = new Branch(branchCode, branchName, folderPath);
+                    Branch branch = new Branch(branchCode, branchName, folderPath,reports);
                     branches.add(branch);
                 }
             }
@@ -45,9 +51,11 @@ public class ExcelReaderService {
         return branches;
     }
 
-    // Helper method to get the cell value as a String, handling different cell types
+    // Helper method to get the cell value as a String, handling different cell
+    // types
     private static String getCellValueAsString(Cell cell) {
-        if (cell == null) return "";
+        if (cell == null)
+            return "";
 
         switch (cell.getCellType()) {
             case STRING:

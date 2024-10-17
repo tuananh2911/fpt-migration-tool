@@ -1,5 +1,6 @@
 package com.fis.services;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,12 +16,21 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fis.domain.Branch;
+
+import oracle.net.aso.c;
 
 public class ReportService {
 
     private static DatabaseService databaseService = new DatabaseService();
+
+    private final static String MAX_NUM_ROWS = "600000";
+
+    public static void initData() throws SQLException {
+        databaseService.initData("REPORT_MIGRATE", "INIT_DATA");
+    }
 
     public static void CMS018Report() throws FileNotFoundException, IOException, InterruptedException {
         String fileName = "CMS018Report.xlsx";
@@ -121,7 +131,7 @@ public class ReportService {
 
     }
 
-    public static void ISS011Report(Branch branch)
+    public static void ISS_011(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -248,7 +258,7 @@ public class ReportService {
 
     }
 
-    public static void ISS012Report(Branch branch)
+    public static void ISS_012(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -375,7 +385,7 @@ public class ReportService {
 
     }
 
-    public static void ATM002REPORT()
+    public static void ATM_002()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -385,18 +395,18 @@ public class ReportService {
 
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("ATM_ID", "Terminal ID");
-        columns.put("zbrcd", "Branch quản lý");
+        columns.put("Terminal_ID", "Terminal ID");
+        columns.put("Branch_quan_ly", "Branch quản lý");
         columns.put("ma_chi_nhanh_tq6", "Branch tiếp quỹ");
         columns.put("MA_AM", "Mã AM quản lý máy");
         columns.put("ATM_TYPE", "ATM TYPE");
         columns.put("HANG_ATM", "Hãng ATM");
-        columns.put("ATM_MODEL", "Model");
-        columns.put("ACCEPTORNAME", "ATM location");
-        columns.put("STARTBALCASS1", "Mệnh giá hộp tiền 1");
-        columns.put("STARTBALCASS2", "Mệnh giá hộp tiền 2");
-        columns.put("STARTBALCASS3", "Mệnh giá hộp tiền 3");
-        columns.put("STARTBALCASS4", "Mệnh giá hộp tiền 4");
+        columns.put("model", "Model");
+        columns.put("ATM_LOCATION", "ATM location");
+        columns.put("menh_gia_hop_tien_1", "Mệnh giá hộp tiền 1");
+        columns.put("menh_gia_hop_tien_2", "Mệnh giá hộp tiền 2");
+        columns.put("menh_gia_hop_tien_3", "Mệnh giá hộp tiền 3");
+        columns.put("menh_gia_hop_tien_4", "Mệnh giá hộp tiền 4");
         columns.put("ATM_GROUP", "ATM group");
         // columns.put("visa", "%Phí Visa off us nước ngoài");
         // columns.put("visa_min", "Phí visa off us nước ngoài Min");
@@ -437,7 +447,7 @@ public class ReportService {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
         titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 8));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, columns.size()));
 
         Font fontBold = sheet.getWorkbook().createFont();
         fontBold.setBold(true);
@@ -456,7 +466,7 @@ public class ReportService {
 
     }
 
-    public static void ACQ009Report(Branch branch)
+    public static void ACQ_009(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -560,7 +570,8 @@ public class ReportService {
         for (int i = 1; i < columns.size() - 8; i++) {
             headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -574,7 +585,8 @@ public class ReportService {
                 headerRow.createCell(i).setCellStyle(cellStyle);
 
             }
-            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            // sheet.autoSizeColumn(i);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
         // merge cell for header
@@ -597,7 +609,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL007Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void GL_007() throws FileNotFoundException, IOException, InterruptedException {
 
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
@@ -681,7 +693,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL005ISSReport() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public static void GL_005_ISS_CT() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -689,7 +701,6 @@ public class ReportService {
         String fileName = "/FTPData/HSC/GL_005_ISS_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("STT", "TT");
         columns.put("ma_cn", "Mã CN CAD");
         columns.put("ma_cn_6_so", "MÃ CN 6 số");
         columns.put("loai_the", "Loại thẻ (phân loại theo TCT)");
@@ -725,10 +736,8 @@ public class ReportService {
             dynamicObjects.add(dynamicObject1);
         }
         // dynamicObjects.add(dynamicObject);
-        System.out.println(dynamicObjects.size());
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, false);
-
+        Sheet sheet = excelGenerator.getSheet("Report");
         Font fontBold = sheet.getWorkbook().createFont();
         fontBold.setBold(true);
         CellStyle styleBold = sheet.getWorkbook().createCellStyle();
@@ -782,7 +791,7 @@ public class ReportService {
             headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             headerRow.getCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellStyle(cellStyle);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.addMergedRegion(new CellRangeAddress(6, 7, i, i));
         }
         for (int i = 9; i < columns.size(); i++) {
@@ -791,23 +800,15 @@ public class ReportService {
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
         headerRow.getCell(9).setCellValue("Dữ liệu chuyển đổi");
+        headerRow.createCell(columns.size()).setCellStyle(cellStyle);
 
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 9, columns.size() - 1));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 9, columns.size()));
 
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(2).setCellValue("LẬP BẢNG");
-        eRow.createCell(8).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(13).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(2).setCellStyle(styleBold);
-        eRow.getCell(8).setCellStyle(styleBold);
-        eRow.getCell(13).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(8, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
-
     }
 
-    public static void ISS009Report(Branch branch)
+    public static void ISS_009(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -913,7 +914,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS010Report(Branch branch)
+    public static void ISS_010(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -1024,7 +1025,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM001REPORT() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ATM_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1032,20 +1033,32 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ATM_001_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("s_excel_atm_cnQuanly.CNQUANLY", "Chi nhánh");
-        columns.put("s_tms_tblAtm.atmid", "Số lượng ATM");
-        columns.put("s_tms_tblCrm.atmid", "Số lượng CRM");
-        columns.put("ACNT_CONTRACT.BRANCH", "Branch quản lý");
-        columns.put("ACNT_CONTRACT.PRODUCT", "Số lượng CRM");
-        columns.put("ACNT_CONTRACT.PRODUCT2", "Số lượng CRM");
+        columns.put("CNQUANLY", "Chi nhánh");
+        columns.put("SL_TCD_ATM", "Số lượng ATM");
+        columns.put("SL_TCD_CRM", "Số lượng CRM");
+        columns.put("CNQUANLY_SCD", "Branch quản lý");
+        columns.put("SL_SCD_ATM", "Số lượng CRM");
+        columns.put("SL_SCD_CRM", "Số lượng CRM");
 
         dynamicObject.setColumns(columns);
 
         // not fill properties for now
         dynamicObject.setProperties(new LinkedHashMap<>());
 
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
-        dynamicObjects.add(dynamicObject);
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ATM_001", columns,
+                inputParams, outParams);
+
+        // dynamicObjects.add(dynamicObject);
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
         Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, false);
@@ -1084,7 +1097,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0010Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_001_0() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1109,8 +1122,21 @@ public class ReportService {
         // not fill properties for now
         dynamicObject.setProperties(new LinkedHashMap<>());
 
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
-        dynamicObjects.add(dynamicObject);
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_001_0", columns,
+                (Map<Integer, Object>) inputParams, outParams);
+
+        // dynamicObjects.add(dynamicObject);
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
         Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
@@ -1167,7 +1193,8 @@ public class ReportService {
                 headerRow.getCell(i).setCellValue("Chuyển đổi CIF - KHDN");
             }
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
         // row sum after data
@@ -1204,7 +1231,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0011Report()
+    public static void ISS_001_1()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -1214,7 +1241,7 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("branch", "BDS");
-        columns.put("PRODUCT_CAD", "Product code");
+        columns.put("product", "Product code");
         columns.put("account_all", "Số lượng trên Cadencie");
         columns.put("account_khong_chuyen", "Không chuyển đổi");
         columns.put("account_chuyen", "Chuyển đổi (Migration)");
@@ -1289,11 +1316,13 @@ public class ReportService {
 
         for (int i = 3; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            headerRow.getCell(i).setCellValue("Chuyển đổi Tài khoản thẻ");
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
+        headerRow.getCell(3).setCellValue("Chuyển đổi tài khoản thẻ");
+        headerRow.getCell(8).setCellValue("Chuyển đổi thẻ");
 
         // row sum after data
         Row sumRow = sheet.createRow(7 + dynamicObjects.size());
@@ -1337,7 +1366,8 @@ public class ReportService {
         sumRow.createCell(9).setCellValue(sum9.doubleValue());
 
         // merge cell for header
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 3, 12));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 3, 7));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 8, columns.size()));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 2, 2));
@@ -1359,7 +1389,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0012Report() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public static void ISS_001_2() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -1463,14 +1493,16 @@ public class ReportService {
         for (int i = 1; i < 6; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow.getCell(i).setCellValue(header[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.createCell(i).setCellStyle(cellStyle);
         }
 
         for (int i = 6; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -1511,7 +1543,7 @@ public class ReportService {
 
     }
 
-    public static void ISS002Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_002() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1638,7 +1670,8 @@ public class ReportService {
         for (int i = 2; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -1663,7 +1696,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS005Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1817,7 +1850,8 @@ public class ReportService {
         for (int i = 2; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -1842,7 +1876,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS003Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -1976,7 +2010,8 @@ public class ReportService {
         for (int i = 2; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2001,7 +2036,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS013Report(Branch branch)
+    public static void ISS_013(Branch branch)
             throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
@@ -2123,7 +2158,7 @@ public class ReportService {
 
     }
 
-    public static void ISS006Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_006() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2206,7 +2241,8 @@ public class ReportService {
         for (int i = 3; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2233,7 +2269,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS007Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_007() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2353,7 +2389,8 @@ public class ReportService {
         for (int i = 3; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2369,7 +2406,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM003REPORT()
+    public static void ATM_003()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
@@ -2436,7 +2473,7 @@ public class ReportService {
 
     }
 
-    public static void ISS008Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_008() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2578,7 +2615,8 @@ public class ReportService {
         for (int i = 2; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2621,7 +2659,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0081Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_008_1() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2740,7 +2778,8 @@ public class ReportService {
         for (int i = 1; i < columns.size() + 1; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2764,7 +2803,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ007Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_007() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2773,31 +2812,32 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("1", "CN quản lý");
-        columns.put("2", "Số Cif Khách hàng");
-        columns.put("3", "Tên Khách hàng");
-        columns.put("4", "Parent Merchant ID");
-        columns.put("5", "Merchant ID");
-        columns.put("6", "Tên Merchant");
-        columns.put("7", "Terminal ID");
-        columns.put("8", "MCC");
-        columns.put("9", "AM");
-        columns.put("10", "RBS number");
-        columns.put("11", "MC");
-        columns.put("12", "MD");
-        columns.put("13", "VC");
-        columns.put("14", "VD");
-        columns.put("15", "JC");
-        columns.put("16", "JD");
-        columns.put("17", "PD");
-        columns.put("18", "PC");
+        columns.put("CN_QUANLY", "CN quản lý");
+        columns.put("CIF_KH", "Số Cif Khách hàng");
+        columns.put("CIF_NAME", "Tên Khách hàng");
+        columns.put("P_MID", "Parent Merchant ID");
+        columns.put("MID_CAD", "Merchant ID");
+        columns.put("MNAME_CAD", "Tên Merchant");
+        columns.put("TID_CAD", "Terminal ID");
+        columns.put("MCC", "MCC");
+        columns.put("AM", "AM");
+        columns.put("RBS_NUM", "RBS number");
+        columns.put("MC", "MC");
+        columns.put("MD", "MD");
+        columns.put("VC", "VC");
+        columns.put("VD", "VD");
+        columns.put("JC", "JC");
+        columns.put("JD", "JD");
+        columns.put("PD", "PD");
+        columns.put("PC", "PC");
 
         dynamicObject.setColumns(columns);
 
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_007", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -2866,7 +2906,8 @@ public class ReportService {
         for (int i = 1; i < columns.size() - 8; i++) {
             headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow.getCell(i).setCellStyle(cellStyle);
         }
 
@@ -2880,16 +2921,15 @@ public class ReportService {
                 headerRow.createCell(i).setCellStyle(cellStyle);
 
             }
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
-
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, columns.size() - 8, columns.size() - 1));
 
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ008Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_008() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -2897,24 +2937,25 @@ public class ReportService {
         String fileName = "/FTPData/HSC/AQC_008_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("1", "CN quản lý");
-        columns.put("2", "Số Cif Khách hàng");
-        columns.put("3", "Tên Khách hàng");
-        columns.put("4", "Merchant main ID");
-        columns.put("5", "Merchant liên kết (Add_info_03)");
-        columns.put("6", "Merchant ID");
-        columns.put("7", "Tên Merchant");
-        columns.put("8", "Terminal ID");
-        columns.put("9", "MCC");
-        columns.put("10", "AM");
-        columns.put("11", "RBS number");
+        columns.put("cn_quan_ly_way4", "CN quản lý");
+        columns.put("cif_way4", "Số Cif Khách hàng");
+        columns.put("ten_kh_way4", "Tên Khách hàng");
+        columns.put("merchant_main_way4", "Merchant main ID");
+        columns.put("merchant_lien_ket_way4", "Merchant liên kết (Add_info_03)");
+        columns.put("merchant_id_way4", "Merchant ID");
+        columns.put("merchant_name_way4", "Tên Merchant");
+        columns.put("terminal_id_way4", "Terminal ID");
+        columns.put("mcc_way4", "MCC");
+        columns.put("ma_am_way4", "AM");
+        columns.put("RBS_NUMBER", "RBS number");
 
         dynamicObject.setColumns(columns);
 
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_008", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -2966,7 +3007,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ006Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_006() throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3115,7 +3156,8 @@ public class ReportService {
         for (int i = 1; i < columns.size() + 1; i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
@@ -3132,7 +3174,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ010Report(Branch branch) throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_010(Branch branch) throws FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3306,7 +3348,8 @@ public class ReportService {
         for (int i = 1; i < columns.size() + 1; i++) {
             headerRow2.createCell(i).setCellStyle(cellStyle);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow.createCell(i).setCellStyle(cellStyle);
             // check columns value length <=3 then set value headerRow2
             if (columns.values().toArray()[i - 1].toString().length() <= 4
@@ -3343,7 +3386,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ011Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_011() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3352,34 +3395,32 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "IST");
-        columns.put("2", "IST");
-        columns.put("3", "IST");
-        columns.put("4", "IST");
-        columns.put("5", "IST");
-        columns.put("6", "IST");
-        columns.put("7", "WAY4");
-        columns.put("8", "Check (True/ False)");
-        columns.put("6", "IST");
-        columns.put("7", "WAY4");
-        columns.put("8", "Check (True/ False)");
-        columns.put("9", "IST");
-        columns.put("10", "WAY4");
-        columns.put("11", "Check (True/ False)");
-        columns.put("12", "IST");
-        columns.put("13", "WAY4");
-        columns.put("14", "Check (True/ False)");
-        columns.put("15", "IST");
-        columns.put("16", "WAY4");
-        columns.put("17", "Check (True/ False)");
-        columns.put("18", "IST");
-        columns.put("19", "WAY4");
-        columns.put("20", "Check (True/ False)");
-        columns.put("21", "IST");
-        columns.put("22", "WAY4");
-        columns.put("23", "Check (True/ False)");
-        columns.put("24", "IST");
-        columns.put("25", "WAY4");
-        columns.put("26", "Check (True/ False)");
+        columns.put("MSGTYPE", "IST");
+        columns.put("PCODE", "IST");
+        columns.put("TXNDEST", "IST");
+        columns.put("RESPCODE", "IST");
+        columns.put("SHCERROR", "IST");
+        columns.put("ist_tran_date", "IST");
+        columns.put("w4_tran_date", "WAY4");
+        columns.put("so_sanh_tran_date", "Check (True/ False)");
+        columns.put("ist_pan", "IST");
+        columns.put("w4_pan", "WAY4");
+        columns.put("so_sanh_pan", "Check (True/ False)");
+        columns.put("ist_rrn", "IST");
+        columns.put("w4_rrn", "WAY4");
+        columns.put("so_sanh_rrn", "Check (True/ False)");
+        columns.put("ist_auth_code", "IST");
+        columns.put("w4_auth_code", "WAY4");
+        columns.put("so_sanh_auth_code", "Check (True/ False)");
+        columns.put("ist_merchant", "IST");
+        columns.put("w4_merchant", "WAY4");
+        columns.put("so_sanh_merchant", "Check (True/ False)");
+        columns.put("ist_TERMID", "IST");
+        columns.put("w4_TERMID", "WAY4");
+        columns.put("so_sanh_TERMID", "Check (True/ False)");
+        columns.put("ist_tran_amount", "IST");
+        columns.put("w4_tran_amount", "WAY4");
+        columns.put("so_sanh_tran_amount", "Check (True/ False)");
         columns.put("27", "SRN (Source Registration Number)");
         columns.put("28", "Target channel");
         columns.put("29", "Source channel");
@@ -3389,7 +3430,8 @@ public class ReportService {
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_011", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -3416,7 +3458,7 @@ public class ReportService {
         style.setAlignment(HorizontalAlignment.CENTER);
 
         titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size() - 1));
 
         // date now format dd/MM/yyyy
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -3458,36 +3500,42 @@ public class ReportService {
         headerRow2.createCell(0).setCellValue("Nguồn dữ liệu");
         headerRow2.getCell(0).setCellStyle(cellStyle);
 
-        for (int i = 1; i < columns.size() - 2; i++) {
+        for (int i = 1; i < columns.size() - 3; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
-        for (int i = columns.size() - 2; i < columns.size() + 1; i++) {
-            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            sheet.autoSizeColumn(i);
+        for (int i = columns.size() - 3; i < columns.size(); i++) {
+            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow.getCell(i).setCellStyle(cellStyle);
+            headerRow2.createCell(i).setCellStyle(cellStyle);
+            sheet.addMergedRegion(new CellRangeAddress(5, 6, i, i));
         }
         String[] header = { "MSGTYPE", "PCODE", "TXNDEST", "RESPCODE", "SHCERROR", "Transaction DATE",
                 "Target Number (PAN)", "RRN (Retrieval Reference Number)", "Auth Code", "Merchant ID", "Terminal ID",
                 "Transaction amount" };
         for (int i = 1; i < 6; i++) {
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow.getCell(i).setCellValue(header[i - 1]);
         }
         for (int i = 6; i < 26; i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3 + 3]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ001Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3495,30 +3543,31 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ACQ_001_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("0", "STT");
-        columns.put("1", "BDS");
-        columns.put("2", "Tổng trước chuyển đổi");
-        columns.put("3", "Tổng không chuyển đổi");
-        columns.put("4", "Tổng được chuyển đổi");
-        columns.put("5", "Tổng chuyển đổi thành công");
-        columns.put("6", "Tổng chuyển đổi không thành công");
-        columns.put("7", "Tổng trước chuyển đổi");
-        columns.put("8", "Tổng không chuyển đổi");
-        columns.put("9", "Tổng được chuyển đổi");
-        columns.put("10", "Tổng chuyển đổi thành công");
-        columns.put("11", "Tổng chuyển đổi không thành công");
-        columns.put("12", "Tổng trước chuyển đổi");
-        columns.put("13", "Tổng không chuyển đổi");
-        columns.put("14", "Tổng được chuyển đổi");
-        columns.put("15", "Tổng chuyển đổi thành công");
-        columns.put("16", "Tổng chuyển đổi không thành công");
+        columns.put("STT", "STT");
+        columns.put("BDS", "BDS");
+        columns.put("tong_cif_truoc_chuyen_doi", "Tổng trước chuyển đổi");
+        columns.put("tong_cif_khong_chuyen_doi", "Tổng không chuyển đổi");
+        columns.put("tong_cif_duoc_chuyen_doi", "Tổng được chuyển đổi");
+        columns.put("tong_cif_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
+        columns.put("tong_cif_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
+        columns.put("tong_merchant_truoc_chuyen_doi", "Tổng trước chuyển đổi");
+        columns.put("tong_merchant_khong_chuyen_doi", "Tổng không chuyển đổi");
+        columns.put("tong_merchant_duoc_chuyen_doi", "Tổng được chuyển đổi");
+        columns.put("tong_merchant_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
+        columns.put("tong_merchant_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
+        columns.put("tong_device_truoc_chuyen_doi", "Tổng trước chuyển đổi");
+        columns.put("tong_device_khong_chuyen_doi", "Tổng không chuyển đổi");
+        columns.put("tong_device_duoc_chuyen_doi", "Tổng được chuyển đổi");
+        columns.put("tong_device_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
+        columns.put("tong_device_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
 
         dynamicObject.setColumns(columns);
 
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_001", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -3592,7 +3641,8 @@ public class ReportService {
         for (int i = 2; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
@@ -3613,7 +3663,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS0041Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_004_1() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -3621,80 +3671,84 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("1", "Số tài khoản thẻ");
-        columns.put("2", "Cadencie");
-        columns.put("3", "Way4");
-        columns.put("4", "So sánh (Pass/ Fail)");
-        columns.put("5", "Cadencie");
-        columns.put("6", "Way4");
-        columns.put("7", "So sánh (Pass/ Fail)");
-        columns.put("8", "Cadencie");
-        columns.put("9", "Way4");
-        columns.put("10", "So sánh (Pass/ Fail)");
-        columns.put("11", "Cadencie");
-        columns.put("12", "Way4");
-        columns.put("13", "So sánh (Pass/ Fail)");
-        columns.put("14", "Cadencie");
-        columns.put("15", "Way4");
-        columns.put("16", "So sánh (Pass/ Fail)");
-        columns.put("17", "Cadencie");
-        columns.put("18", "Way4");
-        columns.put("19", "So sánh (Pass/ Fail)");
-        columns.put("20", "Cadencie");
-        columns.put("21", "Way4");
-        columns.put("22", "So sánh (Pass/ Fail)");
-        columns.put("23", "Cadencie");
-        columns.put("24", "Way4");
-        columns.put("25", "So sánh (Pass/ Fail)");
-        columns.put("26", "Cadencie");
-        columns.put("27", "Way4");
-        columns.put("28", "So sánh (Pass/ Fail)");
-        columns.put("29", "Cadencie");
-        columns.put("30", "Way4");
-        columns.put("31", "So sánh (Pass/ Fail)");
-        columns.put("32", "Cadencie");
-        columns.put("33", "Way4");
-        columns.put("34", "So sánh (Pass/ Fail)");
-        columns.put("35", "Cadencie");
-        columns.put("36", "Way4");
-        columns.put("37", "So sánh (Pass/ Fail)");
-        columns.put("38", "Cadencie");
-        columns.put("39", "Way4");
-        columns.put("40", "So sánh (Pass/ Fail)");
-        columns.put("41", "Cadencie");
-        columns.put("42", "Way4");
-        columns.put("43", "So sánh (Pass/ Fail)");
-        columns.put("44", "Cadencie");
-        columns.put("45", "Way4");
-        columns.put("46", "So sánh (Pass/ Fail)");
-        columns.put("47", "Cadencie");
-        columns.put("48", "Way4");
-        columns.put("49", "So sánh (Pass/ Fail)");
-        columns.put("50", "Cadencie");
-        columns.put("51", "Way4");
-        columns.put("52", "So sánh (Pass/ Fail)");
-        columns.put("53", "Cadencie");
-        columns.put("54", "Way4");
-        columns.put("55", "So sánh (Pass/ Fail)");
-        columns.put("56", "Cadencie");
-        columns.put("57", "Way4");
-        columns.put("58", "So sánh (Pass/ Fail)");
-        columns.put("59", "Cadencie");
-        columns.put("60", "Way4");
-        columns.put("61", "So sánh (Pass/ Fail)");
-        columns.put("62", "Cadencie");
-        columns.put("63", "Way4");
-        columns.put("64", "So sánh (Pass/ Fail)");
-        columns.put("65", "Cadencie");
-        columns.put("66", "Way4");
-        columns.put("67", "So sánh (Pass/ Fail)");
+        columns.put("ACCOUNT_CONTRACT", "Số tài khoản thẻ");
+        columns.put("cif_cad", "Cadencie");
+        columns.put("cif_way4", "Way4");
+        columns.put("SS_cif", "So sánh (Pass/ Fail)");
+        columns.put("cn_cad", "Cadencie");
+        columns.put("cn_way4", "Way4");
+        columns.put("SS_cn", "So sánh (Pass/ Fail)");
+        columns.put("ma_sp_cad", "Cadencie");
+        columns.put("ma_sp_way4", "Way4");
+        columns.put("SS_ma_sp", "So sánh (Pass/ Fail)");
+        columns.put("ngay_mo_cad", "Cadencie");
+        columns.put("ngay_mo_way4", "Way4");
+        columns.put("SS_ngay_mo", "So sánh (Pass/ Fail)");
+        columns.put("ma_gioi_thieu_cad", "Cadencie");
+        columns.put("ma_gioi_thieu_way4", "Way4");
+        columns.put("SS_ma_gioi_thieu", "So sánh (Pass/ Fail)");
+        columns.put("ma_am_cad", "Cadencie");
+        columns.put("ma_am_way4", "Way4");
+        columns.put("SS_ma_am", "So sánh (Pass/ Fail)");
+        columns.put("trang_thai_tk_cad", "Cadencie");
+        columns.put("trang_thai_tk_way4", "Way4");
+        columns.put("SS_trang_thai_tk", "So sánh (Pass/ Fail)");
+        columns.put("feecode_cad", "Cadencie");
+        columns.put("feecode_way4", "Way4");
+        columns.put("SS_feecode", "So sánh (Pass/ Fail)");
+        columns.put("feemonth_cad", "Cadencie");
+        columns.put("feemonth_way4", "Way4");
+        columns.put("SS_feemonth", "So sánh (Pass/ Fail)");
+        columns.put("1", "Cadencie");
+        columns.put("2", "Way4");
+        columns.put("3", "So sánh (Pass/ Fail)");
+        columns.put("fee_delay_cad", "Cadencie");
+        columns.put("fee_delay_way4", "Way4");
+        columns.put("SS_feedelay", "So sánh (Pass/ Fail)");
+        columns.put("delay_active_cad", "Cadencie");
+        columns.put("delay_active_way4", "Way4");
+        columns.put("SS_delay_active", "So sánh (Pass/ Fail)");
+        // columns.put("classcode_cad", "Cadencie");
+        // columns.put("classcode_way4", "Way4");
+        // columns.put("SS_classcode", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_1_cad", "Cadencie");
+        columns.put("tk_lien_ket_1_way", "Way4");
+        columns.put("SS_tk_lien_ket_1", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_2_cad", "Cadencie");
+        columns.put("tk_lien_ket_2_way", "Way4");
+        columns.put("SS_tk_lien_ket_2", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_3_cad", "Cadencie");
+        columns.put("tk_lien_ket_3_way", "Way4");
+        columns.put("SS_tk_lien_ket_3", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_4_cad", "Cadencie");
+        columns.put("tk_lien_ket_4_way", "Way4");
+        columns.put("SS_tk_lien_ket_4", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_5_cad", "Cadencie");
+        columns.put("tk_lien_ket_5_way", "Way4");
+        columns.put("SS_tk_lien_ket_5", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_6_cad", "Cadencie");
+        columns.put("tk_lien_ket_6_way", "Way4");
+        columns.put("SS_tk_lien_ket_6", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_7_cad", "Cadencie");
+        columns.put("tk_lien_ket_7_way", "Way4");
+        columns.put("SS_tk_lien_ket_7", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_8_cad", "Cadencie");
+        columns.put("tk_lien_ket_8_way", "Way4");
+        columns.put("SS_tk_lien_ket_8", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_9_cad", "Cadencie");
+        columns.put("tk_lien_ket_9_way", "Way4");
+        columns.put("SS_tk_lien_ket_9", "So sánh (Pass/ Fail)");
+        columns.put("tk_lien_ket_10_cad", "Cadencie");
+        columns.put("tk_lien_ket_10_way", "Way4");
+        columns.put("SS_tk_lien_ket_10", "So sánh (Pass/ Fail)");
 
         dynamicObject.setColumns(columns);
 
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_004_1", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -3705,7 +3759,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -3774,24 +3828,27 @@ public class ReportService {
         for (int i = 2; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
 
         for (int i = 2; i < columns.size(); i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
 
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS004Report() throws FileNotFoundException, IOException, InterruptedException {
+    public static void ISS_004() throws FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -3806,15 +3863,15 @@ public class ReportService {
         columns.put("5", "Cadencie");
         columns.put("6", "Way4");
         columns.put("7", "So sánh (Pass/ Fail)");
-        columns.put("8", "Cadencie");
+        columns.put("CUSTR_REF", "Cadencie");
         columns.put("9", "Way4");
         columns.put("10", "So sánh (Pass/ Fail)");
-        columns.put("11", "Cadencie");
-        columns.put("12", "Way4");
-        columns.put("13", "So sánh (Pass/ Fail)");
-        columns.put("14", "Cadencie");
-        columns.put("15", "Way4");
-        columns.put("16", "So sánh (Pass/ Fail)");
+        columns.put("BUSI_NAME", "Cadencie");
+        columns.put("SHORT_NAME", "Way4");
+        columns.put("SS_TKH", "So sánh (Pass/ Fail)");
+        columns.put("ZBOC", "Cadencie");
+        columns.put("BRANCH", "Way4");
+        columns.put("SS_CNPHT", "So sánh (Pass/ Fail)");
         columns.put("17", "Cadencie");
         columns.put("18", "Way4");
         columns.put("19", "So sánh (Pass/ Fail)");
@@ -3962,14 +4019,16 @@ public class ReportService {
         for (int i = 1; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
 
         for (int i = 1; i < columns.size(); i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3]);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
@@ -3986,7 +4045,7 @@ public class ReportService {
 
     }
 
-    public static void ACQ004Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_004() throws SQLException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -4100,7 +4159,7 @@ public class ReportService {
 
         for (int i = 1; i < 7; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
@@ -4108,21 +4167,21 @@ public class ReportService {
 
         for (int i = 7; i < 10; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
         for (int i = 10; i < columns.size() - 3; i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
         for (int i = columns.size() - 4; i < columns.size(); i++) {
             headerRow.createCell(i).setCellStyle(cellStyle);
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
@@ -4163,7 +4222,7 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ002Report() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public static void ACQ_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -4278,7 +4337,7 @@ public class ReportService {
         for (int i = 1; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
@@ -4294,14 +4353,15 @@ public class ReportService {
                 "Số điện thoại (tất cả sđt gắn client)", "Email (tất cả email gắn client)" };
         for (int i = 8; i < columns.size(); i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3 - 2]);
-            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            // sheet.autoSizeColumn(i);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ005Report() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
@@ -4433,7 +4493,7 @@ public class ReportService {
         for (int i = 1; i < columns.size(); i++) {
             headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
             // resize column width
-            sheet.autoSizeColumn(i);
+            // sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 20 * 256);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
@@ -4449,7 +4509,8 @@ public class ReportService {
                 "Comment Text (mã AM)" };
         for (int i = 9; i < columns.size(); i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3 - 3]);
-            sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            // sheet.autoSizeColumn(i);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
@@ -4458,4 +4519,181 @@ public class ReportService {
 
         excelGenerator.writeExcel(fileName);
     }
+
+    public static void ACQ_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/ACQ_003_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("STT", "STT");
+        columns.put("merchant_id", "CAD");
+        columns.put("cif_cad", "CAD");
+        columns.put("cif_prf", "PRF");
+        columns.put("cif_way4", "Way4");
+        columns.put("SS_cif", "Check (True/ False)");
+        columns.put("ten_kh_prf", "PRF");
+        columns.put("ten_kh_way4", "Way4");
+        columns.put("SS_ten_kh", "Check (True/ False)");
+        columns.put("so_dkkd_prf", "PRF");
+        columns.put("so_dkkd_way4", "Way4");
+        columns.put("SS_so_dkkd", "Check (True/ False)");
+        columns.put("ma_so_thue_prf", "PRF");
+        columns.put("ma_so_thue_way4", "Way4");
+        columns.put("SS_ma_so_thue", "Check (True/ False)");
+        columns.put("dkkd_noi_cap_prf", "PRF");
+        columns.put("dkkd_noi_cap_way4", "Way4");
+        columns.put("SS_dkkd_noi_cap", "Check (True/ False)");
+        columns.put("dia_chi_kh_dkkd_prf", "PRF");
+        columns.put("dia_chi_kh_dkkd_way4", "Way4");
+        columns.put("SS_dia_chi_kh_dkkd", "Check (True/ False)");
+        columns.put("sdt_mobile_prf", "PRF");
+        columns.put("sdt_mobile_way4", "Way4");
+        columns.put("SS_sdt_mobile", "Check (True/ False)");
+        columns.put("sdt_work_prf", "PRF");
+        columns.put("sdt_work_way4", "Way4");
+        columns.put("SS_sdt_work", "Check (True/ False)");
+        columns.put("sdt_home_prf", "PRF");
+        columns.put("sdt_home_way4", "Way4");
+        columns.put("SS_sdt_home", "Check (True/ False)");
+        columns.put("email_1_prf", "PRF");
+        columns.put("email_1_way4", "Way4");
+        columns.put("SS_email_1", "Check (True/ False)");
+        columns.put("email_2_prf", "PRF");
+        columns.put("email_2_way4", "Way4");
+        columns.put("SS_email_2", "Check (True/ False)");
+        columns.put("email_3_prf", "PRF");
+        columns.put("email_3_way4", "Way4");
+        columns.put("SS_email_3", "Check (True/ False)");
+        columns.put("kh_zcomcode_prf", "PRF");
+        columns.put("kh_zcomcode_way4", "Way4");
+        columns.put("SS_kh_zcomcode", "Check (True/ False)");
+        columns.put("nguoi_daidien_1_prf", "PRF");
+        columns.put("nguoi_daidien_1_way4", "Way4");
+        columns.put("SS_nguoi_daidien_1", "Check (True/ False)");
+        columns.put("chuc_vu_1_prf", "PRF");
+        columns.put("chuc_vu_1_way4", "Way4");
+        columns.put("SS_chuc_vu_1", "Check (True/ False)");
+        columns.put("nguoi_daidien_2_prf", "PRF");
+        columns.put("nguoi_daidien_2_way4", "Way4");
+        columns.put("SS_nguoi_daidien_2", "Check (True/ False)");
+        columns.put("chuc_vu_2_prf", "PRF");
+        columns.put("chuc_vu_2_way4", "Way4");
+        columns.put("SS_chuc_vu_2", "Check (True/ False)");
+        columns.put("nguoi_daidien_3_prf", "PRF");
+        columns.put("nguoi_daidien_3_way4", "Way4");
+        columns.put("SS_nguoi_daidien_3", "Check (True/ False)");
+        columns.put("chuc_vu_3_prf", "PRF");
+        columns.put("chuc_vu_3_way4", "Way4");
+        columns.put("SS_chuc_vu_3", "Check (True/ False)");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_003", columns,
+                inputParams, outParams);
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "Báo cáo đối chiếu thông tin khách hàng sau chuyển đổi - KHDN");
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size()));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: ACQ_003");
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+        headerRow2.getCell(0).setCellValue("Nguồn dữ liệu");
+
+        for (int i = 1; i < columns.size(); i++) {
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            // resize column width
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+        }
+
+        headerRow.getCell(1).setCellValue("Merchant ID");
+        headerRow.getCell(2).setCellValue("Số CIF KH tại BIDV");
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 2, 5));
+
+        String[] header = {
+                "Tên KH", "Số ĐKKD", "Mã số thuế", "Ngày ĐKKD + Cơ quan cấp",
+                "Địa chỉ khách hàng trên ĐKKD",
+                "Số điện thoại Mobile", "Số điện thoại Work", "Số điện thoại Home",
+                "Email người đại diện 1", "Email người đại diện 2", "Email người đại diện 3",
+                "Classifier cho phân loại KH zcomcode", "Người đại diện 1 (Gắn address_type của client)",
+                "Chức danh người đại diện 1", "Người đại diện 2 (Gắn address_type của client)",
+                "Chức danh người đại diện 2", "Người đại diện 3 (Gắn address_type của client)",
+                "Chức danh người đại diện 3"
+        };
+
+        for (int i = 6; i < columns.size(); i += 3) {
+            headerRow.getCell(i).setCellValue(header[i / 3 - 2]);
+            sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
+        }
+
+        excelGenerator.writeExcel(fileName);
+    }
+
 }
