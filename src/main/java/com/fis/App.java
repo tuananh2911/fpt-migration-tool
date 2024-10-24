@@ -50,18 +50,18 @@ public final class App {
                 "ATM_001",
                 "ATM_002",
                 "ATM_003",
-                // "GL_007",
                 "ISS_001_0",
                 "ISS_001_1",
                 "ISS_001_2",
                 "ISS_002",
                 "ISS_003",
-                // "ISS_004",
+                "ISS_004",
                 "ISS_004_1",
                 "ISS_005",
                 "ISS_006",
-                // "ISS_007",
-                // "ISS_008_1",
+                "ISS_007",
+                "ISS_008",
+                "ISS_008_1",
                 "ACQ_001",
                 "ACQ_002",
                 "ACQ_003",
@@ -70,132 +70,145 @@ public final class App {
                 "ACQ_006",
                 "ACQ_007",
                 "ACQ_008",
-                "GL_005_ISS_CT",
                 "ACQ_011",
+                // "GL_001_ISS",
+                // "GL_002_ISS_KH",
+                // "GL_004_ISS_KH",
+                "GL_005_ISS_CT",
+                "GL_005_ISS_TH",
         };
         System.out.println("Init data");
         // ReportService.initData();
         System.out.println("Init data done");
 
-        ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(thread_num.trim()));
+        // ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(thread_num.trim()));
 
-        ProgressTracker progressTracker = new ProgressTracker(ds.size() *
-                reportClassName.length + reportHSCClassName.length);
-        for (Branch branch : ds) {
-            String folderPath = branch.getFolderPath();
-            if (folderPath.contains("/FTPData")) {
-                folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
-                branch.setFolderPath(folderPath);
-            } else {
-                branch.setFolderPath("/FTPData/");
-            }
+        // ProgressTracker progressTracker = new ProgressTracker(ds.size() *
+        //         reportClassName.length + reportHSCClassName.length);
 
-            if(branch.getReports() != null && branch.getReports().length != 0){
-                for (String report : branch.getReports()) {
-                    executor.execute(() -> {
-                        long startTime = System.currentTimeMillis();
-                        try {
-                            System.out.println("Thread " + Thread.currentThread().getId() + " "
-                                    + Thread.currentThread().getName() + " is working on " + report + " - "
-                                    + branch.getBranchCode() + " - " + branch.getBranchName());
-                            ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
-                            Thread.sleep(50);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            long endTime = System.currentTimeMillis();
-                            progressTracker.taskCompleted();
-                            System.out.println("Thread " + Thread.currentThread().getId() + " "
-                                    + Thread.currentThread().getName() + " finished working on " + report + " - "
-                                    + branch.getBranchCode() + " - " + branch.getBranchName()
-                                    + " (Duration: " + (endTime - startTime) + " ms)");
-                        }
-                    });
-                }
-                continue;
-            }
+        // for (String report : reportHSCClassName) {
 
-            for (String report : reportClassName) {
-                executor.execute(() -> {
-                    long startTime = System.currentTimeMillis();
-                    try {
-                        System.out.println("Thread " + Thread.currentThread().getId() + " "
-                                + Thread.currentThread().getName() + " is working on " + report + " - "
-                                + branch.getBranchCode() + " - " + branch.getBranchName());
-                        ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
-                        Thread.sleep(50);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        long endTime = System.currentTimeMillis();
-                        progressTracker.taskCompleted();
-                        System.out.println("Thread " + Thread.currentThread().getId() + " "
-                                + Thread.currentThread().getName() + " finished working on " + report + " - "
-                                + branch.getBranchCode() + " - " + branch.getBranchName()
-                                + " (Duration: " + (endTime - startTime) + " ms)");
-                    }
-                });
-            }
-        }
+        //     executor.execute(() -> {
+        //         long startTime = System.currentTimeMillis();
+        //         try {
+        //             System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                     + Thread.currentThread().getName() + " is working on " + report);
+        //             ReportService.class.getMethod(report).invoke(null);
+        //             Thread.sleep(50);
+        //         } catch (Exception e) {
+        //             e.printStackTrace();
+        //         } finally {
+        //             long endTime = System.currentTimeMillis();
+        //             progressTracker.taskCompleted();
+        //             System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                     + Thread.currentThread().getName() + " finished working on " + report
+        //                     + " (Duration: " + (endTime - startTime) + " ms)");
+        //         }
+        //     });
 
-        for (String report : reportHSCClassName) {
+        // }
 
-            executor.execute(() -> {
-                long startTime = System.currentTimeMillis();
-                try {
-                    System.out.println("Thread " + Thread.currentThread().getId() + " "
-                            + Thread.currentThread().getName() + " is working on " + report);
-                    ReportService.class.getMethod(report).invoke(null);
-                    Thread.sleep(50);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    long endTime = System.currentTimeMillis();
-                    progressTracker.taskCompleted();
-                    System.out.println("Thread " + Thread.currentThread().getId() + " "
-                            + Thread.currentThread().getName() + " finished working on " + report
-                            + " (Duration: " + (endTime - startTime) + " ms)");
-                }
-            });
+        // for (Branch branch : ds) {
+        //     String folderPath = branch.getFolderPath();
+        //     if (folderPath.contains("/FTPData")) {
+        //         folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
+        //         branch.setFolderPath(folderPath);
+        //     } else {
+        //         branch.setFolderPath("/FTPData/");
+        //     }
 
-        }
+        //     if (branch.getReports() != null && branch.getReports().length != 0) {
+        //         for (String report : branch.getReports()) {
+        //             executor.execute(() -> {
+        //                 long startTime = System.currentTimeMillis();
+        //                 try {
+        //                     System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                             + Thread.currentThread().getName() + " is working on " + report + " - "
+        //                             + branch.getBranchCode() + " - " + branch.getBranchName());
+        //                     ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
+        //                     Thread.sleep(50);
+        //                 } catch (Exception e) {
+        //                     e.printStackTrace();
+        //                 } finally {
+        //                     long endTime = System.currentTimeMillis();
+        //                     progressTracker.taskCompleted();
+        //                     System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                             + Thread.currentThread().getName() + " finished working on " + report + " - "
+        //                             + branch.getBranchCode() + " - " + branch.getBranchName()
+        //                             + " (Duration: " + (endTime - startTime) + " ms)");
+        //                 }
+        //             });
+        //         }
+        //         continue;
+        //     }
 
-        while (!progressTracker.isFinished()) {
-            try {
-                // add time delay to reduce CPU usage
-                System.out.print("\0337"); // Save cursor position
-                System.out.print("\033[999B"); // Move cursor to the bottom of the terminal
-                System.out.print("\033[2K"); // Clear the entire line
-                System.out.printf("Progress: %d%% %s", progressTracker.getProgressPercentage(),
-                        progressTracker.getProgressBar());
-                System.out.print("\0338"); // Restore cursor position
+        //     for (String report : reportClassName) {
+        //         executor.execute(() -> {
+        //             long startTime = System.currentTimeMillis();
+        //             try {
+        //                 System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                         + Thread.currentThread().getName() + " is working on " + report + " - "
+        //                         + branch.getBranchCode() + " - " + branch.getBranchName());
+        //                 ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
+        //                 Thread.sleep(50);
+        //             } catch (Exception e) {
+        //                 e.printStackTrace();
+        //             } finally {
+        //                 long endTime = System.currentTimeMillis();
+        //                 progressTracker.taskCompleted();
+        //                 System.out.println("Thread " + Thread.currentThread().getId() + " "
+        //                         + Thread.currentThread().getName() + " finished working on " + report + " - "
+        //                         + branch.getBranchCode() + " - " + branch.getBranchName()
+        //                         + " (Duration: " + (endTime - startTime) + " ms)");
+        //             }
+        //         });
+        //     }
+        // }
 
-                Thread.sleep(100);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        // while (!progressTracker.isFinished()) {
+        //     try {
+        //         // add time delay to reduce CPU usage
+        //         System.out.print("\0337"); // Save cursor position
+        //         System.out.print("\033[999B"); // Move cursor to the bottom of the terminal
+        //         System.out.print("\033[2K"); // Clear the entire line
+        //         System.out.printf("Progress: %d%% %s", progressTracker.getProgressPercentage(),
+        //                 progressTracker.getProgressBar());
+        //         System.out.print("\0338"); // Restore cursor position
 
-        executor.shutdown();
-        // Branch branch1 = new Branch("120", "Chi Nhánh Sở Giao dịch 1","/FTPData/ChiNhanh/MienBac/SGD1/NHAN/");
-        // ReportService.ACQ_009(branch1);
-        // // ReportService.ISS_009(branch1);
-        // ReportService.ISS_011(branch1);
+        //         Thread.sleep(100);
+        //     } catch (Exception e) {
+        //         e.printStackTrace();
+        //     }
+        // }
+
+        // executor.shutdown();
+        Branch branch1 = new Branch("215", "Chi Nhánh Cầu Giấy","/FTPData/ChiNhanh/MienBac/CauGiay/NHAN/", new String[]{});
+        // ReportService.ISS_001_1();
         // ReportService.ISS_004_1();
+        // ReportService.ISS_004();
+        // ReportService.ISS_002();
+        // ReportService.ISS_005();
+        // ReportService.ISS_007();
+        // ReportService.ISS_008();
+        // ReportService.ISS_008_1();
+        ReportService.ISS_009(branch1);
+        // ReportService.ISS_011(branch1);
+        // ReportService.ISS_012(branch1);
         // ReportService.ACQ_004();
         // ReportService.ACQ_003();
         // ReportService.ACQ_001();
         // ReportService.ACQ_002();
         // ReportService.ACQ_005();
+        // ReportService.ACQ_006();
         // ReportService.ACQ_007();
         // ReportService.ACQ_008();
-        // ReportService.ISS_012(branch1);
+        // ReportService.ACQ_009(branch1);
+        // ReportService.ACQ_011();
         // ReportService.ATM_001();
         // ReportService.ATM_002();
-        // ReportService.GL_005_ISS_CT();
         // ReportService.ATM_003();
-        // ReportService.ACQ_011();
-        // ReportService.ISS_001_1();
+        // ReportService.GL_005_ISS_CT();
+        // ReportService.GL_005_ISS_TH();
         // System.out.println("End");
     }
 }

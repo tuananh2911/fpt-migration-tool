@@ -102,7 +102,7 @@ public class ExcelGenerator {
         int sheetIndex = 0;
         Sheet currentSheet = sheet;
         for (DynamicObject dynamicObject : dataList) {
-            System.out.println(stt + "/" + dataList.size());
+            // System.out.println(stt + "/" + dataList.size());
             if (_rowIndex % maxRowPerSheet == 0) {
                 ++sheetIndex;
                 writeFooter(currentSheet, _rowIndex + 6);
@@ -119,6 +119,9 @@ public class ExcelGenerator {
             // if (stt > dataList.size() -10000) {
             // Thread.sleep(200);
             // }
+        }
+        if(sheetIndex == 0){
+            writeFooter(currentSheet, _rowIndex + 6);
         }
         return workbook.getSheetAt(0);
         // try (FileOutputStream fos = new FileOutputStream(fileName)) {

@@ -37,7 +37,7 @@ public class DatabaseService {
     public List<DynamicObject> callProcedure(String packageName, String procedureName, Map<String, String> columns,
             Map<Integer, Object> inputParams, List<Integer> outParams) throws SQLException {
         List<DynamicObject> resultList = new ArrayList<>();
-
+        long startTime = System.currentTimeMillis();
         // Build the SQL call string dynamically based on the number of parameters
         String call = buildProcedureCall(packageName, procedureName, inputParams.size(), outParams.size());
 
@@ -79,6 +79,9 @@ public class DatabaseService {
         } finally {
             connection.close();
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Thread " + Thread.currentThread().getId() + " " + Thread.currentThread().getName()
+                + " query done on " + procedureName + " (Duration: " + (endTime - startTime) + " ms)");
 
         return resultList;
     }
