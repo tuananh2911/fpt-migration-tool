@@ -188,10 +188,12 @@ public final class App {
         // ReportService.ISS_004();
         // ReportService.ISS_002();
         // ReportService.ISS_005();
+        // ReportService.ISS_006();
         // ReportService.ISS_007();
         // ReportService.ISS_008();
         // ReportService.ISS_008_1();
-        ReportService.ISS_009(branch1);
+        // ReportService.ISS_009(branch1);
+        ReportService.ISS_010(branch1);
         // ReportService.ISS_011(branch1);
         // ReportService.ISS_012(branch1);
         // ReportService.ACQ_004();

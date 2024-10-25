@@ -1,6 +1,8 @@
 package com.fis.services;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class DatabaseService {
@@ -131,7 +133,9 @@ public class DatabaseService {
 
                     // Perform type-specific operations if needed
                     if ("DATE".equals(columnType)) {
-                        columnValue = resultSet.getDate(i);
+                        // format dd/MM/yyyy
+                        DateFormat dateFNFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        columnValue = dateFNFormat.format(resultSet.getDate(i));
                     }
 
                     // check null return ""
