@@ -840,9 +840,9 @@ public class ReportService {
         columns.put("E_MAIL", "Email");
         columns.put("COMPANY_NAM", "Tên cơ quan công tác");
         columns.put("PROFESSION", "Chức vụ");
-        columns.put("a", "Mã nhóm KH");
-        columns.put("b", "Mã GLP (mã dặm thường)");
-        columns.put("c", "Mã VTV");
+        columns.put("MA_NHOM_KH", "Mã nhóm KH");
+        columns.put("MA_GPL", "Mã GLP (mã dặm thường)");
+        columns.put("MA_VTV", "Mã VTV");
         columns.put("SOCIAL_NUMBER", "Câu trả lời câu hỏi bảo mật");
         columns.put("reference_name", "Tên người tham chiếu");
         columns.put("TITLE", "Giới tính người tham chiếu");
