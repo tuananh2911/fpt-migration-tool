@@ -5,8 +5,22 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.fis.config.DataSourceConfig;
+
+import javax.sql.DataSource;
+
 public class DatabaseService {
 
+    private DataSource dataSource;
+
+    public DatabaseService() {
+        this.dataSource = DataSourceConfig.getDataSource();
+    }
+
+    private final Logger logger = LogManager.getLogger(DatabaseService.class);
     // Oracle JDBC connection details
     private final String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
     private final String username = "dmreport";
@@ -20,7 +34,7 @@ public class DatabaseService {
         String call = "{call " + packageName + "." + procedureName + "}";
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(url, username, password);
+            connection = dataSource.getConnection();
             CallableStatement callableStatement = connection.prepareCall(call);
             callableStatement.execute();
         } catch (SQLException e) {
@@ -45,7 +59,7 @@ public class DatabaseService {
 
         Connection connection = null;
         try {
-            connection = DriverManager.getConnection(url, username, password);
+            connection = dataSource.getConnection();
             CallableStatement callableStatement = connection.prepareCall(call);
 
             // Set input parameters
@@ -82,9 +96,8 @@ public class DatabaseService {
             connection.close();
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("Thread " + Thread.currentThread().getId() + " " + Thread.currentThread().getName()
+        logger.trace("Thread " + Thread.currentThread().getId() + " " + Thread.currentThread().getName()
                 + " query done on " + procedureName + " (Duration: " + (endTime - startTime) + " ms)");
-
         return resultList;
     }
 

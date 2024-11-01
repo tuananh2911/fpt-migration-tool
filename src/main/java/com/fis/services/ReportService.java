@@ -1495,16 +1495,17 @@ public class ReportService {
         }
 
         headerRow.getCell(6).setCellValue("Dư nợ gốc");
-        headerRow.getCell(15).setCellValue("Dư lãi");
-        headerRow.getCell(19).setCellValue("Dư phí");
-        headerRow.getCell(25).setCellValue("Dư nợ trả góp chưa phân bổ");
-        headerRow.getCell(28).setCellValue("Tổng số lượng GD trả góp chuyển đổi");
+        headerRow.getCell(14).setCellValue("Dư lãi");
+        headerRow.getCell(18).setCellValue("Dư phí");
+        headerRow.getCell(23).setCellValue("Dư nợ trả góp chưa phân bổ");
+        headerRow.getCell(26).setCellValue("Tổng số lượng GD trả góp chuyển đổi");
 
         // merge cell for header
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 6, 14));
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 15, 18));
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 19, 24));
-        sheet.addMergedRegion(new CellRangeAddress(6, 6, 25, columns.size()));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 6, 13));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 14, 17));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 18, 22));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 23, 25));
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 26, columns.size()));
 
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
@@ -2153,24 +2154,24 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ISS_006_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("CUSTR_REF", "Loại thẻ");
-        columns.put("BRANCH", "Tiêu chí");
-        columns.put("SOLUONGGD_2", "Số lượng giao dịch");
-        columns.put("GIATRIGD_3", "Tổng giá trị giao dịch");
-        columns.put("GIATRIGD_4", "Số lượng giao dịch");
-        columns.put("CARD_NBR", "Tổng số lượng giao dịch");
-        columns.put("SL_CHUYEN_DOI_6", "Cadencie");
-        columns.put("SL_CHUYEN_DOI_7", "Way4");
-        columns.put("GIATRI_CHUYEN_DOI_8", "Cadencie");
-        columns.put("GIATRI_CHUYEN_DOI_9", "Way4");
-        columns.put("chenh_lech_10", "Số lượng");
-        columns.put("chenh_lech_11", "Giá trị");
+        columns.put("loai_the", "Loại thẻ");
+        columns.put("tieu_chi", "Tiêu chí");
+        columns.put("sl_gd", "Số lượng giao dịch");
+        columns.put("giatri_gd", "Tổng giá trị giao dịch");
+        columns.put("sl_khong_chuyen_doi", "Số lượng giao dịch");
+        columns.put("giatri_khong_chuyen_doi", "Tổng số lượng giao dịch");
+        columns.put("sl_chuyen_doi", "Cadencie");
+        columns.put("sl_chuyen_doi_way4", "Way4");
+        columns.put("giatri_chuyen_doi", "Cadencie");
+        columns.put("giatri_chuyen_doi_way4", "Way4");
+        columns.put("sl_chech_lech", "Số lượng");
+        columns.put("giatri_chech_lech", "Giá trị");
 
         dynamicObject.setColumns(columns);
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
-        List<DynamicObject> dynamicObjects = databaseService.callProcedure("QUOCDB", "ISS_006", columns,
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_006", columns,
                 inputParams, outParams);
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -2180,7 +2181,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.getSheet("Report");
+        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -2243,135 +2244,6 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 2, 2));
 
-        Row row = sheet.createRow(7);
-        row.createCell(0).setCellValue("1");
-        row.createCell(1).setCellValue("TDQT");
-        row.createCell(2).setCellValue("Giao dịch chưa quyết toán (không bao gồm Preauth)");
-        row.getCell(0).setCellStyle(cellStyle);
-        row.getCell(1).setCellStyle(cellStyle);
-        row.getCell(2).setCellStyle(cellStyle);
-        // dynamicObjects[0] col 3 -> end
-        for (int i = 3; i < columns.size() + 1; i++) {
-            String key = (String) columns.keySet().toArray()[i - 1];
-            Object property = dynamicObjects.get(0).getProperties().get(key);
-            if (property == null) {
-                property = "0";
-            }
-            String value = property.toString();
-            try {
-                BigDecimal bd = new BigDecimal(value);
-                row.createCell(i).setCellValue(bd.toString());
-            } catch (Exception e) {
-                row.createCell(i).setCellValue(BigDecimal.ZERO.toString());
-            }
-            // row.createCell(i).setCellValue(value);
-            row.getCell(i).setCellStyle(cellStyle);
-        }
-
-        Row row2 = sheet.createRow(8);
-        row2.createCell(0).setCellValue("2");
-        row2.createCell(1).setCellValue("TDQT");
-        row2.createCell(2).setCellValue("GD onus");
-        row2.getCell(0).setCellStyle(cellStyle);
-        row2.getCell(1).setCellStyle(cellStyle);
-        row2.getCell(2).setCellStyle(cellStyle);
-        for (int i = 3; i < columns.size() + 1; i++) {
-            row2.createCell(i).setCellStyle(cellStyle);
-        }
-
-        Row row3 = sheet.createRow(9);
-        row3.createCell(0).setCellValue("3");
-        row3.createCell(1).setCellValue("TDQT");
-        row3.createCell(2).setCellValue("GD rút tiền off us");
-        row3.getCell(0).setCellStyle(cellStyle);
-        row3.getCell(1).setCellStyle(cellStyle);
-        row3.getCell(2).setCellStyle(cellStyle);
-        for (int i = 3; i < columns.size() + 1; i++) {
-            row3.createCell(i).setCellStyle(cellStyle);
-        }
-
-        Row row4 = sheet.createRow(10);
-        row4.createCell(0).setCellValue("4");
-        row4.createCell(1).setCellValue("TDQT");
-        row4.createCell(2).setCellValue("GD Preauth");
-        row4.getCell(0).setCellStyle(cellStyle);
-        row4.getCell(1).setCellStyle(cellStyle);
-        row4.getCell(2).setCellStyle(cellStyle);
-        for (int i = 3; i < columns.size() + 1; i++) {
-            row4.createCell(i).setCellStyle(cellStyle);
-        }
-
-        // mer cell from col 3 -> end
-        for (int i = 3; i < columns.size() + 1; i++) {
-            sheet.addMergedRegion(new CellRangeAddress(7, 10, i, i));
-        }
-
-        Row row5 = sheet.createRow(11);
-        row5.createCell(0).setCellValue("5");
-        row5.createCell(1).setCellValue("GNQT");
-        row5.createCell(2).setCellValue("Giao dịch chưa quyết toán (không bao gồm Preauth)");
-        row5.getCell(0).setCellStyle(cellStyle);
-        row5.getCell(1).setCellStyle(cellStyle);
-        row5.getCell(2).setCellStyle(cellStyle);
-        // dynamicObjects[1] col 3 -> end
-        for (int i = 3; i < columns.size() + 1; i++) {
-            String key = (String) columns.keySet().toArray()[i - 1];
-            Object property = dynamicObjects.get(1).getProperties().get(key);
-            if (property == null) {
-                property = "0";
-            }
-            String value = property.toString();
-            try {
-                BigDecimal bd = new BigDecimal(value);
-                row5.createCell(i).setCellValue(bd.toString());
-            } catch (Exception e) {
-                row5.createCell(i).setCellValue(BigDecimal.ZERO.toString());
-            }
-            // row5.createCell(i).setCellValue(value);
-            row5.getCell(i).setCellStyle(cellStyle);
-        }
-
-        Row row6 = sheet.createRow(12);
-        row6.createCell(0).setCellValue("6");
-        row6.createCell(1).setCellValue("GNQT");
-        row6.createCell(2).setCellValue("GD Preauth");
-        row6.getCell(0).setCellStyle(cellStyle);
-        row6.getCell(1).setCellStyle(cellStyle);
-        row6.getCell(2).setCellStyle(cellStyle);
-        for (int i = 3; i < columns.size() + 1; i++) {
-            row6.createCell(i).setCellStyle(cellStyle);
-        }
-
-        // mer cell from col 3 -> end
-        for (int i = 3; i < columns.size() + 1; i++) {
-            sheet.addMergedRegion(new CellRangeAddress(11, 12, i, i));
-        }
-
-        Row row7 = sheet.createRow(13);
-        row7.createCell(0).setCellValue("7");
-        row7.createCell(1).setCellValue("TDQT");
-        row7.createCell(2).setCellValue("GD điều chỉnh");
-        row7.getCell(0).setCellStyle(cellStyle);
-        row7.getCell(1).setCellStyle(cellStyle);
-        row7.getCell(2).setCellStyle(cellStyle);
-        // dynamicObjects[2] col 3 -> end
-        for (int i = 3; i < columns.size() + 1; i++) {
-            String key = (String) columns.keySet().toArray()[i - 1];
-            Object property = dynamicObjects.get(2).getProperties().get(key);
-            if (property == null) {
-                property = "0";
-            }
-            String value = property.toString();
-            try {
-                BigDecimal bd = new BigDecimal(value);
-                row7.createCell(i).setCellValue(bd.toString());
-            } catch (Exception e) {
-                row7.createCell(i).setCellValue(BigDecimal.ZERO.toString());
-            }
-            // row7.createCell(i).setCellValue(value);
-            row7.getCell(i).setCellStyle(cellStyle);
-        }
-
         // total row
         int endRow = 14;
         Row eRow = sheet.createRow(endRow);
@@ -2386,21 +2258,25 @@ public class ReportService {
         }
         // sum dynamicObjects key index 0 - 3
         BigDecimal sum0 = dynamicObjects.stream().map(dynamicObject1 -> new BigDecimal(
-                dynamicObject1.getProperties().get("SOLUONGGD_2").toString()))
+                dynamicObject1.getProperties().get("sl_gd").toString()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal sum1 = dynamicObjects.stream().map(dynamicObject1 -> new BigDecimal(
-                dynamicObject1.getProperties().get("GIATRIGD_3").toString()))
+                dynamicObject1.getProperties().get("giatri_gd").toString()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // BigDecimal sum2 = dynamicObjects.stream().map(dynamicObject1 -> new
-        // BigDecimal(
-        // dynamicObject1.getProperties().get("GIATRIGD_4").toString()))
-        // .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal sum2 = dynamicObjects.stream().map(dynamicObject1 -> new BigDecimal(
+                dynamicObject1.getProperties().get("sl_khong_chuyen_doi").toString()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal sum3 = dynamicObjects.stream().map(dynamicObject1 -> new BigDecimal(
+                dynamicObject1.getProperties().get("giatri_khong_chuyen_doi").toString()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         eRow.getCell(3).setCellValue(sum0.toString());
         eRow.getCell(4).setCellValue(sum1.toString());
-        // eRow.getCell(5).setCellValue(sum2.toString());
+        eRow.getCell(5).setCellValue(sum2.toString());
+        eRow.getCell(6).setCellValue(sum3.toString());
 
         excelGenerator.writeExcel(fileName);
     }
@@ -3296,7 +3172,8 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_010(Branch branch) throws FileNotFoundException, IOException, InterruptedException {
+    public static void ACQ_010(Branch branch)
+            throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
@@ -3306,88 +3183,88 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
 
-        columns.put("ACNT_CONTRACT.BRANCH", "CAD");
-        columns.put("x1", "Way4");
-        columns.put("x2", "CAD");
-        columns.put("x3", "Way4");
-        columns.put("ACNT_CONTRACT.PRODUCT", "Product");
-        columns.put("ACNT_CONTRACT.CONTRACT_NAME", "Main Contract name");
-        columns.put("ACNT_CONTRACT.CONTRACT_NUM", "Main Contract number");
-        columns.put("x4", "CAD");
-        columns.put("x5", "Way4");
-        columns.put("x6", "Sub Contract name");
-        columns.put("x7", "Sub Contract number");
-        columns.put("x8", "CAD");
-        columns.put("x9", "Way4");
-        columns.put("x10", "CAD");
-        columns.put("x11", "Way4");
-        columns.put("x12", "CAD");
-        columns.put("x13", "Way4");
-        columns.put("x14", "CAD");
-        columns.put("x15", "Way4");
-        columns.put("x16", "CAD");
-        columns.put("x17", "Way4");
+        columns.put("CN_QUANLY_CAD", "CAD");
+        columns.put("CN_QUANLY_WAY4", "Way4");
+        columns.put("CIF_KH_CAD", "CAD");
+        columns.put("CIF_KH_WAY4", "Way4");
+        columns.put("PRODUCT", "Product");
+        columns.put("MAIN_CONTRACT_NAME_WAY4", "Main Contract name");
+        columns.put("MAIN_CONTRACT_NUMBER_WAY4", "Main Contract number");
+        // columns.put("x4", "CAD");
+        // columns.put("1", "Way4");
+        columns.put("MAIN_MERCHANT_ID_CAD", "Sub Contract name");
+        columns.put("MAIN_MERCHANT_ID_WAY4", "Sub Contract number");
+        columns.put("SUB_MERCHANT_ID_CAD", "CAD");
+        columns.put("SUB_MERCHANT_ID_WAY4", "Way4");
+        columns.put("TERMINAL_ID_CAD", "CAD");
+        columns.put("TERMINAL_ID_WAY4", "Way4");
+        columns.put("MCC_CAD", "CAD");
+        columns.put("MCC_WAY4", "Way4");
+        columns.put("AM_CAD", "CAD");
+        columns.put("AM_WAY4", "Way4");
+        columns.put("RBS_NUMBER_CAD", "CAD");
+        columns.put("RBS_NUMBER_WAY4", "Way4");
 
-        columns.put("4", "MC");
-        columns.put("5", "MD");
-        columns.put("6", "VC");
-        columns.put("7", "VD");
-        columns.put("8", "JC");
-        columns.put("9", "JD");
-        columns.put("10", "PD");
-        columns.put("11", "PC");
-        columns.put("12", "ACI");
-        columns.put("13", "ACV");
-        columns.put("14", "ADI");
-        columns.put("15", "ADV");
-        columns.put("16", "API");
-        columns.put("17", "APV");
-        columns.put("18", "DCI");
-        columns.put("19", "DCV");
-        columns.put("20", "DDI");
-        columns.put("21", "DDV");
-        columns.put("22", "DPI");
-        columns.put("23", "DPV");
-        columns.put("24", "JCI");
-        columns.put("25", "JCO");
-        columns.put("26", "JCV");
-        columns.put("27", "JDI");
-        columns.put("28", "JDO");
-        columns.put("29", "JDV");
-        columns.put("30", "JPI");
-        columns.put("31", "JPV");
-        columns.put("32", "MCI");
-        columns.put("33", "MCO");
-        columns.put("34", "MCV");
-        columns.put("35", "MDI");
-        columns.put("36", "MDO");
-        columns.put("37", "MDV");
-        columns.put("38", "MPI");
-        columns.put("39", "MPV");
-        columns.put("40", "NCI");
-        columns.put("41", "NDI");
-        columns.put("42", "PCV");
-        columns.put("43", "PDO");
-        columns.put("44", "PDV");
-        columns.put("45", "UCI");
-        columns.put("46", "UCO");
-        columns.put("47", "UCV");
-        columns.put("48", "UDI");
-        columns.put("49", "UDO");
-        columns.put("50", "UDV");
-        columns.put("51", "UPI");
-        columns.put("52", "UPV");
-        columns.put("53", "VCI");
-        columns.put("54", "VCO");
-        columns.put("55", "VCV");
-        columns.put("56", "VDI");
-        columns.put("57", "VDO");
-        columns.put("58", "VDV");
-        columns.put("59", "VPI");
-        columns.put("60", "VPO");
-        columns.put("61", "VPV");
-        columns.put("62", "LDI");
-        columns.put("63", "CDI");
+        columns.put("MC_CAD", "MC");
+        columns.put("MD_CAD", "MD");
+        columns.put("VC_CAD", "VC");
+        columns.put("VD_CAD", "VD");
+        columns.put("JC_CAD", "JC");
+        columns.put("JD_CAD", "JD");
+        columns.put("PD_CAD", "PD");
+        columns.put("PC_CAD", "PC");
+        columns.put("MDR_ACI", "ACI");
+        columns.put("MDR_ACV", "ACV");
+        columns.put("MDR_ADI", "ADI");
+        columns.put("MDR_ADV", "ADV");
+        columns.put("MDR_API", "API");
+        columns.put("MDR_APV", "APV");
+        columns.put("MDR_DCI", "DCI");
+        columns.put("MDR_DCV", "DCV");
+        columns.put("MDR_DDI", "DDI");
+        columns.put("MDR_DDV", "DDV");
+        columns.put("MDR_DPI", "DPI");
+        columns.put("MDR_DPV", "DPV");
+        columns.put("MDR_JCI", "JCI");
+        columns.put("MDR_JCO", "JCO");
+        columns.put("MDR_JCV", "JCV");
+        columns.put("MDR_JDI", "JDI");
+        columns.put("MDR_JDO", "JDO");
+        columns.put("MDR_JDV", "JDV");
+        columns.put("MDR_JPI", "JPI");
+        columns.put("MDR_JPV", "JPV");
+        columns.put("MDR_MCI", "MCI");
+        columns.put("MDR_MCO", "MCO");
+        columns.put("MDR_MCV", "MCV");
+        columns.put("MDR_MDI", "MDI");
+        columns.put("MDR_MDO", "MDO");
+        columns.put("MDR_MDV", "MDV");
+        columns.put("MDR_MPI", "MPI");
+        columns.put("MDR_MPV", "MPV");
+        columns.put("MDR_NCI", "NCI");
+        columns.put("MDR_NDI", "NDI");
+        columns.put("MDR_PCV", "PCV");
+        columns.put("MDR_PDO", "PDO");
+        columns.put("MDR_PDV", "PDV");
+        columns.put("MDR_UCI", "UCI");
+        columns.put("MDR_UCO", "UCO");
+        columns.put("MDR_UCV", "UCV");
+        columns.put("MDR_UDI", "UDI");
+        columns.put("MDR_UDO", "UDO");
+        columns.put("MDR_UDV", "UDV");
+        columns.put("MDR_UPI", "UPI");
+        columns.put("MDR_UPV", "UPV");
+        columns.put("MDR_VCI", "VCI");
+        columns.put("MDR_VCO", "VCO");
+        columns.put("MDR_VCV", "VCV");
+        columns.put("MDR_VDI", "VDI");
+        columns.put("MDR_VDO", "VDO");
+        columns.put("MDR_VDV", "VDV");
+        columns.put("MDR_VPI", "VPI");
+        columns.put("MDR_VPO", "VPO");
+        columns.put("MDR_VPV", "VPV");
+        columns.put("MDR_LDI", "LDI");
+        columns.put("MDR_CDI", "CDI");
 
         dynamicObject.setColumns(columns);
 
@@ -3395,7 +3272,8 @@ public class ReportService {
         inputParams.put(1, branch.getBranchCode());
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ACQ_010", columns,
+                inputParams, outParams);
 
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -3406,7 +3284,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -3505,6 +3383,7 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 22, 29));
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 30, columns.size()));
 
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
@@ -4369,9 +4248,21 @@ public class ReportService {
         columns.put("sdt_mobile_prf", "PRF");
         columns.put("sdt_mobile_way4", "Way4");
         columns.put("SS_sdt_mobile", "Check (True/ False)");
+        columns.put("SDT_WORK_PRF", "PRF");
+        columns.put("SDT_WORK_WAY4", "Way4");
+        columns.put("SS_SDT_WORK", "Check (True/ False)");
+        columns.put("SDT_HOME_PRF", "PRF");
+        columns.put("SDT_HOME_WAY4", "Way4");
+        columns.put("SS_SDT_HOME", "Check (True/ False)");
         columns.put("email_1_prf", "PRF");
         columns.put("email_1_way4", "Way4");
         columns.put("SS_email_1", "Check (True/ False)");
+        columns.put("email_2_prf", "PRF");
+        columns.put("email_2_way4", "Way4");
+        columns.put("SS_email_2", "Check (True/ False)");
+        columns.put("email_3_prf", "PRF");
+        columns.put("email_3_way4", "Way4");
+        columns.put("SS_email_3", "Check (True/ False)");
 
         dynamicObject.setColumns(columns);
 
@@ -4465,9 +4356,12 @@ public class ReportService {
         headerRow.getCell(3).setCellValue("Client type");
         headerRow.getCell(4).setCellValue("Số CIF KH tại BIDV");
 
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 4, 7));
+
         String header[] = { "Số ID khách hàng (số CCCD)", "Tên KH",
                 "Địa chỉ liên hệ tại cấp client đồng bộ từ PRF sang", "Classifier cho phân loại KH zcomcode",
-                "Số điện thoại (tất cả sđt gắn client)", "Email (tất cả email gắn client)" };
+                "Số điện thoại Mobile", "Số điện thoại Work", "Số điện thoại Home", "Email người đại diện 1",
+                "Email người đại diện 2", "Email người đại diện 3" };
         for (int i = 8; i < columns.size(); i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3 - 2]);
             sheet.setColumnWidth(i, 20 * 256);
@@ -4723,7 +4617,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -4810,6 +4704,7 @@ public class ReportService {
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
+        excelGenerator.generateExcel(7, dynamicObjects, true);
         excelGenerator.writeExcel(fileName);
     }
 

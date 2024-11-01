@@ -51,6 +51,25 @@
       <version>19.8.0.0</version>
     </dependency>
 
+    <!-- log4j2 -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.17.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.17.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>3.4.5</version>      <!-- Hoặc phiên bản mới nhất -->
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
     <!-- <dependency>
       <groupId>org.hibernate</groupId>
@@ -59,6 +78,17 @@
     </dependency> -->
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+          <include>**/*.json</include>
+          <include>**/*.yml</include>
+        </includes>
+      </resource>
+    </resources>
     <plugins>
       <!-- add plugin execute jar -->
       <plugin>
@@ -81,27 +111,27 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
         <executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                    <goal>shade</goal>
-                </goals>
-                <configuration>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.fis.App</mainClass>
-                        </transformer>
-                    </transformers>
-                </configuration>
-            </execution>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.fis.App</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
         </executions>
-    </plugin>
-    <!-- Maven Enforcer Plugin -->
-    <plugin>
+      </plugin>
+      <!-- Maven Enforcer Plugin -->
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>${maven-enforcer-plugin.version}</version>
-    </plugin>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
