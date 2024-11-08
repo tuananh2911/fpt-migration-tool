@@ -3425,9 +3425,9 @@ public class ReportService {
         columns.put("ist_tran_amount", "IST");
         columns.put("w4_tran_amount", "WAY4");
         columns.put("so_sanh_tran_amount", "Check (True/ False)");
-        columns.put("27", "SRN (Source Registration Number)");
-        columns.put("28", "Target channel");
-        columns.put("29", "Source channel");
+        columns.put("srn", "SRN (Source Registration Number)");
+        columns.put("target_channel", "Target channel");
+        columns.put("source_channel", "Source channel");
 
         dynamicObject.setColumns(columns);
 
