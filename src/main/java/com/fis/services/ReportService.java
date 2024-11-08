@@ -479,16 +479,16 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("BRANCH", "CN quản lý");
-        columns.put("IMP_NBR", "Số Cif khách hàng");
-        columns.put("NAM", "Tên khách hàng");
-        columns.put("OWN_MERCH", "Merchant main ID");
+        columns.put("CN_QUANLY", "CN quản lý");
+        columns.put("CIF", "Số Cif khách hàng");
+        columns.put("TEN_KH", "Tên khách hàng");
+        columns.put("MERCHANT_MAIN_ID", "Merchant main ID");
         columns.put("MECHANT_LIENKET", "Merchant liên kết");
-        columns.put("MERCHANT", "Merchant ID");
-        columns.put("TERM_NBR", "Terminal ID");
-        columns.put("MER_TYPE", "MCC");
-        columns.put("CAID", "AM");
-        columns.put("DEP_ACCT", "Dep_acct");
+        columns.put("MERCHANT_ID", "Merchant ID");
+        columns.put("TERMINAL_ID", "Terminal ID");
+        columns.put("MCC", "MCC");
+        columns.put("AM", "AM");
+        columns.put("Dep_acct", "Dep_acct");
         columns.put("MC", "MC");
         columns.put("MD", "MD");
         columns.put("VC", "VC");
@@ -761,7 +761,7 @@ public class ReportService {
         rowTitle.createCell(0).setCellValue("BÁO CÁO TỔNG HỢP SỐ LIỆU CHUYỂN ĐỔI");
         rowTitle.getCell(0).setCellStyle(style);
         Row row2 = sheet.createRow(3);
-        row2.createCell(0).setCellValue("Mã báo cáo: GL_005_ISS");
+        row2.createCell(0).setCellValue("Mã báo cáo: GL_005_ISS_CT");
         Row row3 = sheet.createRow(4);
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         row3.createCell(0).setCellValue("Ngày dữ liệu: " + dateFormat.format(date));
@@ -784,20 +784,20 @@ public class ReportService {
         cellStyle.setWrapText(true);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        headerRow.createCell(0).setCellValue("TT");
+        headerRow.createCell(0).setCellValue("STT");
         headerRow.getCell(0).setCellStyle(cellStyle);
         headerRow2.createCell(0).setCellStyle(cellStyle);
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
 
         for (int i = 1; i < 9; i++) {
-            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i-1]);
             headerRow.getCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellStyle(cellStyle);
             // sheet.autoSizeColumn(i);
             sheet.addMergedRegion(new CellRangeAddress(6, 7, i, i));
         }
         for (int i = 9; i < columns.size(); i++) {
-            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i-1]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
@@ -822,7 +822,7 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         // columns.put("STT", "STT");
-        columns.put("DATE_OPEN", "Ngày dữ liệu");
+        columns.put("EXCU_DATE", "Ngày dữ liệu");
         columns.put("cif", "Số CIF");
         columns.put("full_name", "Họ tên khách hàng");
         columns.put("GENDER", "Giới tính");
@@ -2697,8 +2697,11 @@ public class ReportService {
         columns.put("SO_KY_TRA_GOP_CHUA_LEN_SAO_KE", "Cadencie");
         columns.put("SO_KY_TRA_GOP_CHUA_LEN_SAO_KE_W4", "Way4");
         columns.put("SO_SANH_SO_KY_TRA_GOP_CHUA_LEN_SAO_KE", "So sánh (Pass/ Fail)");
-        columns.put("SO_KY_TRA_GOP_DA_LEN_SAO_KE", "NGAY_KET_THU");
-        columns.put("SO_KY_TRA_GOP_DA_LEN_SAO_KE_W4", "NGAY_KET_THUC_W4");
+        columns.put("DU_NO_TRA_GOP_CHUA_LEN_SAO_KE", "Cadencie");
+        columns.put("DU_NO_TRA_GOP_CHUA_LEN_SAO_KE_W4", "Way4");
+        columns.put("SO_SANH_DU_NO_TRA_GOP_CHUA_LEN_SAO_KE", "So sánh (Pass/ Fail)");
+        columns.put("NGAY_KET_THU", "Cadencie");
+        columns.put("NGAY_KET_THUC_W4", "Way4");
         columns.put("SO_SANH_NGAY_KET_THU", "So sánh (Pass/ Fail)");
 
         dynamicObject.setColumns(columns);
@@ -2755,11 +2758,11 @@ public class ReportService {
         row1.getCell(0).setCellStyle(styleBold);
         row2.getCell(0).setCellStyle(styleBold);
 
-        String[] header = { "CN quản lý", "Số tài khoản thẻ", "Số tiền GD gốc", "Số kỳ đăng kí trả góp",
-                "Gốc trả góp từng kỳ",
-                "Số kỳ đăng kí trả góp", "Gốc trả góp từng kỳ",
-                "Dư nợ trả góp chưa lên sao kê", "Ngày kết thúc",
-                "Số tiền quá hạn" };
+        String[] header = { "CN quản lý", "Số giao dịch", "Số tài khoản thẻ", "Số tiền GD gốc",
+                "Số kỳ đăng ký trả góp",
+                "Gốc trả góp từng kỳ", "Dư nợ trả góp đã lên sao kê",
+                "Số kỳ trả góp chưa lên sao kê", "Dư nợ trả góp chưa lên sao kê",
+                "Ngày kết thúc" };
 
         Row headerRow = sheet.createRow(5);
         Row headerRow2 = sheet.createRow(6);
@@ -2788,7 +2791,7 @@ public class ReportService {
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
-        for (int i = 1; i < columns.size(); i += 3) {
+        for (int i = 1; i < columns.size() + 1; i += 3) {
             headerRow.getCell(i).setCellValue(header[i / 3]);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
@@ -4827,42 +4830,35 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_001_ISS() {
-
-    }
-
-    public static void GL_002_ISS_KH() throws SQLException {
+    public static void GL_001_ISS() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_002_ISS_KH_" + dateFN + ".xlsx";
+        String fileName = "/FTPData/HSC/GL_001_ISS_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
         columns.put("MA_CN", "Mã CN");
-        columns.put("ma_cn_6_so", "Số Tài khoản thẻ");
-        columns.put("loai_the", "CIF");
-        columns.put("ma_khach_hang", "Mã KH (ZCOMCODE của bảng CIF)");
-        columns.put("phan_loai_no", "Tên chủ thẻ");
-        columns.put("du_no_goc_trong_han", "Dư nợ gốc trong hạn");
-        columns.put("du_no_goc_qua_han", "Dư nợ gốc quá hạn");
-        columns.put("lai_du_no_nhom_1", "Lãi");
-        columns.put("lai_du_no_nhom_2_5", "Phí");
-        columns.put("phi_du_no_nhom_1", "Cộng");
-        columns.put("phi_du_no_nhom_2_5", "Số ngày quá hạn");
-        columns.put("tong", "Dư nợ gốc trong hạn");
-        columns.put("tong", "Dư nợ gốc quá hạn");
-        columns.put("tong", "Lãi nhóm 1");
-        columns.put("tong", "Phí nhóm 1");
-        columns.put("tong", "Lãi nhóm 2-5");
-        columns.put("tong", "Phí nhóm 2-5");
-        columns.put("tong", "Cộng");
-        columns.put("tong", "Số ngày quá hạn");
-        columns.put("tong", "Dư nợ gốc trong hạn");
-        columns.put("tong", "Dư nợ gốc quá hạn");
-        columns.put("tong", "Lãi");
-        columns.put("tong", "Phí");
-        columns.put("tong", "Cộng");
+        columns.put("MA_PHONG_BAN", "Mã phòng/ban (PGD/TSC CN)");
+        columns.put("MA_KHACH_HANG", "Mã KH (Tổng hợp theo ZCOMCODE - CIF)");
+        columns.put("PL", "Loại thẻ (phân loại theo TCT)");
+        columns.put("DU_NO_GOC_TRONG_HAN_CAD", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_CAD", "Dư nợ gốc quá hạn");
+        columns.put("LAI_DU_NO_CAD", "Lãi");
+        columns.put("PHI_DU_NO_CAD", "Phí");
+        columns.put("TONG_CAD", "Cộng");
+        columns.put("DU_NO_GOC_TRONG_HAN_W4", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_W4", "Dư nợ gốc quá hạn");
+        columns.put("LAI_NHOM1_W4", "Lãi nhóm 1");
+        columns.put("PHI_NHOM1_W4", "Phí nhóm 1");
+        columns.put("LAI_NHOM25_W4", "Lãi nhóm 2-5");
+        columns.put("PHI_NHOM25_W4", "Phí nhóm 2 -5");
+        columns.put("TONG_W4", "Cộng");
+        columns.put("DU_NO_GOC_TRONG_HAN_CHENH_LECH", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_CHENH_LECH", "Dư nợ gốc quá hạn");
+        columns.put("LAI_CHENH_LECH", "Lãi");
+        columns.put("PHI_CHENH_LECH", "Phí");
+        columns.put("TONG_CHENH_LECH", "Cộng");
 
         dynamicObject.setColumns(columns);
 
@@ -4870,9 +4866,152 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_001_ISS", columns,
                 inputParams, outParams);
 
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.getSheet("Report");
+
+        // title row
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "BÁO CÁO ĐỐI CHIẾU SỐ DƯ NỢ VAY THẺ TÍN DỤNG (Cấp tổng hợp)");
+
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size() - 1));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: GL_001_ISS");
+
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+        row2.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
+
+        for (int i = 1; i < columns.size(); i++) {
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            // resize column width
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+        }
+
+        for (int i = 1; i < 5; i++) {
+            headerRow.getCell(i).setCellValue((String) columns.values().toArray()[i]);
+            sheet.addMergedRegion(new CellRangeAddress(5, 6, i, i));
+        }
+
+        headerRow.getCell(5).setCellValue("Tổng dư nợ theo dõi trên CAD");
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 5, 9));
+
+        headerRow.getCell(10).setCellValue("Tổng dư nợ theo dõi trên W4");
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 10, 16));
+
+        headerRow.getCell(17).setCellValue("Chênh lệch Way4 - CAD");
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 17, columns.size() - 1));
+
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
+        excelGenerator.writeExcel(fileName);
+    }
+
+    public static void GL_002_ISS_KH()
+            throws SQLException, NumberFormatException, FileNotFoundException, IOException, InterruptedException {
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/GL_002_ISS_KH_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("STT", "STT");
+        columns.put("MA_CN_3_SO", "Mã CN");
+        columns.put("MA_CN", "Mã phòng Ban (TSC CN/PGD)");
+        columns.put("SO_TK_THE", "Số Tài khoản thẻ");
+        columns.put("CIF", "CIF");
+        columns.put("MA_KHACH_HANG", "Mã KH (ZCOMCODE của bảng CIF)");
+        columns.put("TEN_CHU_THE", "Tên chủ thẻ");
+        columns.put("DU_NO_GOC_TRONG_HAN_CAD", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_CAD", "Dư nợ gốc quá hạn");
+        columns.put("LAI_DU_NO_CAD", "Lãi");
+        columns.put("PHI_DU_NO_CAD", "Phí");
+        columns.put("TONG_CAD", "Cộng");
+        columns.put("SO_NGAY_QUA_HAN_CAD", "Số ngày quá hạn");
+        columns.put("DU_NO_GOC_TRONG_HAN_W4", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_W4", "Dư nợ gốc quá hạn");
+        columns.put("LAI_NHOM1_W4", "Lãi nhóm 1");
+        columns.put("PHI_NHOM1_W4", "Phí nhóm 1");
+        columns.put("LAI_NHOM25_W4", "Lãi nhóm 2-5");
+        columns.put("PHI_NHOM25_W4", "Phí nhóm 2-5");
+        columns.put("TONG_W4", "Số ngày quá hạn");
+        columns.put("SO_NGAY_QUA_HAN_CAD", "Số ngày quá hạn");
+        columns.put("DU_NO_GOC_TRONG_HAN_CHENH_LECH", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_CHENH_LECH", "Dư nợ gốc quá hạn");
+        columns.put("LAI_CHENH_LECH", "Lãi");
+        columns.put("PHI_CHENH_LECH", "Phí");
+        columns.put("TONG_CHENH_LECH", "Cộng");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        // List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
+        //         inputParams, outParams);
+                List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
             dynamicObject1.setColumns(columns);
@@ -4933,10 +5072,195 @@ public class ReportService {
 
         // bold font, wrap text, middle alignment
         Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
+
+        for (int i = 1; i < columns.size(); i++) {
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            // resize column width
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow2.getCell(i).setCellStyle(cellStyle);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+        }
+
+        for (int i = 1; i < 7; i++) {
+            headerRow.getCell(i).setCellValue((String) columns.values().toArray()[i]);
+            sheet.addMergedRegion(new CellRangeAddress(5, 6, i, i));
+        }
+
+        String[] header = { "Tổng dư nợ theo dõi trên CAD", "Tổng dư nợ theo dõi trên Way4", "Chênh lệch Way4 - CAD" };
+
+        headerRow.getCell(7).setCellValue(header[0]);
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 7, 12));
+        headerRow.getCell(13).setCellValue(header[1]);
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 13, 20));
+        headerRow.getCell(21).setCellValue(header[2]);
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 21, columns.size() - 1));
+
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
+        excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void GL_004_ISS_KH() {
+    public static void GL_004_ISS_KH()
+            throws SQLException, NumberFormatException, FileNotFoundException, IOException, InterruptedException {
+        Date date = new Date();
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        String dateFN = dateFNFormat.format(date);
+        String fileName = "/FTPData/HSC/GL_004_ISS_KH_" + dateFN + ".xlsx";
+        DynamicObject dynamicObject = new DynamicObject();
+        Map<String, String> columns = new LinkedHashMap<>();
+        columns.put("STT", "STT");
+        columns.put("NGAY_HACH_TOAN", "Ngày hạch toán");
+        columns.put("MA_CN_PHT", "Mã CN PHT");
+        columns.put("CIF", "CIF");
+        columns.put("TEN_CHU_THE", "Tên chủ thẻ");
+        columns.put("SO_THE_MASKED", "Số thẻ masked");
+        columns.put("LOAI_TIEN_TE", "Loại tiền tệ");
+        columns.put("LOAI_THIET_BI", "Loại thiết bị");
+        columns.put("MA_THIET_BI", "Mã thiết bị");
+        columns.put("MA_CN_TTT", "Mã CN TTT");
+        columns.put("NGAY_GIAO_DICH", "Ngày giao dịch");
+        columns.put("GIO_GIAO_DICH", "Giờ giao dịch");
+        columns.put("SO_AUTH_CODE", "Số Auth Code");
+        columns.put("GOC", "Gốc");
+        columns.put("LAI_CAD", "Lãi");
+        columns.put("PHI_CAD", "Phí");
+        columns.put("TONG_CAD", "Cộng");
+        columns.put("DU_NO_GOC_TRONG_HAN_W4", "Dư nợ gốc trong hạn");
+        columns.put("DU_NO_GOC_QUA_HAN_W4", "Dư nợ gốc trong hạn");
+        columns.put("LAI_DU_NO_NHOM_1", "Lãi dư nợ nhóm 1");
+        columns.put("LAI_DU_NO_NHOM_2_5", "Lãi dư nợ nhóm 2-5");
+        columns.put("PHI_DU_NO_NHOM_1", "Phí dư nợ nhóm 1");
+        columns.put("PHI_DU_NO_NHOM_2_5", "Phí dư nợ nhóm 2-5");
+        columns.put("SO_NGAY_QUA_HAN_W4", "Số ngày quá hạn");
+        columns.put("TONG_W4", "Cộng");
+        columns.put("CHENH_LECH_GOC", "Gốc");
+        columns.put("CHENH_LECH_LAI", "Lãi");
+        columns.put("CHENH_LECH_PHI_GIAO_DICH", "Phí giao dịch");
+
+        dynamicObject.setColumns(columns);
+
+        Map<Integer, Object> inputParams = new HashMap<>();
+        List<Integer> outParams = new ArrayList<>();
+        outParams.add(1);
+
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_004_ISS_KH", columns,
+                inputParams, outParams);
+
+        if (dynamicObjects.size() == 0) {
+            DynamicObject dynamicObject1 = new DynamicObject();
+            dynamicObject1.setColumns(columns);
+            dynamicObject1.setProperties(new LinkedHashMap<>());
+            dynamicObjects.add(dynamicObject1);
+        }
+
+        ExcelGenerator excelGenerator = new ExcelGenerator();
+
+        Sheet sheet = excelGenerator.getSheet("Report");
+
+        // title row
+
+        Row titleRow = sheet.createRow(0);
+        titleRow.createCell(0)
+                .setCellValue(
+                        "BÁO CÁO ĐỐI CHIẾU GIAO DỊCH PHÁT SINH DƯ NỢ VAY THẺ TÍN DỤNG THEO SỐ THẺ KH");
+
+        // font bold, size 16 for title
+        Font font = sheet.getWorkbook().createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 16);
+        CellStyle style = sheet.getWorkbook().createCellStyle();
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.CENTER);
+
+        titleRow.getCell(0).setCellStyle(style);
+
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, columns.size() - 1));
+
+        // date now format dd/MM/yyyy
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        String dateStr = dateFormat.format(date);
+
+        // header row 1
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue("Mã báo cáo: GL_004_ISS_KH");
+
+        // header row 2
+        Row row2 = sheet.createRow(2);
+        row2.createCell(0).setCellValue("Ngày báo cáo: " + dateStr);
+
+        Font fontBold = sheet.getWorkbook().createFont();
+        fontBold.setBold(true);
+        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
+        styleBold.setFont(fontBold);
+
+        row1.getCell(0).setCellStyle(styleBold);
+
+        Row headerRow = sheet.createRow(5);
+        Row headerRow2 = sheet.createRow(6);
+        Row headerRow3 = sheet.createRow(7);
+
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+
+        // bold font, wrap text, middle alignment
+        Font font2 = sheet.getWorkbook().createFont();
+        font2.setBold(true);
+        cellStyle.setFont(font2);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        headerRow.createCell(0).setCellValue("STT");
+        headerRow.getCell(0).setCellStyle(cellStyle);
+        headerRow2.createCell(0).setCellStyle(cellStyle);
+        headerRow3.createCell(0).setCellStyle(cellStyle);
+        sheet.addMergedRegion(new CellRangeAddress(5, 7, 0, 0));
+
+        for (int i = 1; i < columns.size(); i++) {
+            headerRow3.createCell(i).setCellValue((String) columns.values().toArray()[i]);
+            // resize column width
+            // sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 20 * 256);
+            headerRow3.getCell(i).setCellStyle(cellStyle);
+            headerRow2.createCell(i).setCellStyle(cellStyle);
+            headerRow.createCell(i).setCellStyle(cellStyle);
+        }
+
+        for (int i = 1; i < 14; i++) {
+            headerRow.getCell(i).setCellValue((String) columns.values().toArray()[i]);
+            sheet.addMergedRegion(new CellRangeAddress(5, 7, i, i));
+        }
+
+        headerRow.getCell(14).setCellValue("Giao dịch tài chính phát sinh");
+
+        sheet.addMergedRegion(new CellRangeAddress(5, 5, 14, columns.size() - 1));
+
+        headerRow2.getCell(14).setCellValue("Cadencie");
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 14, 17));
+
+        headerRow2.getCell(18).setCellValue("Way4");
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 18, 24));
+
+        headerRow2.getCell(25).setCellValue("Chênh lệch Way4 - Cadencie");
+        sheet.addMergedRegion(new CellRangeAddress(6, 6, 25, columns.size() - 1));
+
+        excelGenerator.generateExcel(8, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
+        excelGenerator.writeExcel(fileName);
 
     }
 

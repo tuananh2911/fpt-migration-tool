@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -110,6 +111,9 @@ public class ExcelGenerator {
                 if (!optionalHeader && !dataList.isEmpty()) {
                     createHeaderRow(currentSheet, dynamicObject.getColumns(), 0);
                 }
+                if(optionalHeader){
+                    // Code here
+                }
                 _rowIndex = 1;
             }
             Row row = currentSheet.createRow(_rowIndex++);
@@ -211,4 +215,40 @@ public class ExcelGenerator {
             }
         }
     }
+    private void copyLastHeaderWithMerges(Sheet destinationSheet, Map<String, String> columns, int rowIndex) {
+    Row headerRow = destinationSheet.createRow(rowIndex);
+    CellStyle cellStyle = destinationSheet.getWorkbook().createCellStyle();
+    cellStyle.setBorderBottom(BorderStyle.THIN);
+    cellStyle.setBorderTop(BorderStyle.THIN);
+    cellStyle.setBorderRight(BorderStyle.THIN);
+    cellStyle.setBorderLeft(BorderStyle.THIN);
+
+    // Apply bold, center, wrap text, etc.
+    Font font = destinationSheet.getWorkbook().createFont();
+    font.setBold(true);
+    cellStyle.setFont(font);
+    cellStyle.setWrapText(true);
+    cellStyle.setAlignment(HorizontalAlignment.CENTER);
+    cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+    // Create "STT" column
+    headerRow.createCell(0).setCellValue("STT");
+    headerRow.getCell(0).setCellStyle(cellStyle);
+
+    int colIndex = 1;
+    for (String columnName : columns.values()) {
+        Cell cell = headerRow.createCell(colIndex++);
+        cell.setCellValue(columnName);
+        cell.setCellStyle(cellStyle);
+    }
+
+    // Copy any merged regions from the original header row (assumed as rowIndex - 1)
+    for (int i = 0; i < destinationSheet.getNumMergedRegions(); i++) {
+        CellRangeAddress mergedRegion = destinationSheet.getMergedRegion(i);
+        if (mergedRegion.getFirstRow() == rowIndex) {
+            destinationSheet.addMergedRegion(new CellRangeAddress(
+                    rowIndex, rowIndex, mergedRegion.getFirstColumn(), mergedRegion.getLastColumn()));
+        }
+    }
+}
 }
