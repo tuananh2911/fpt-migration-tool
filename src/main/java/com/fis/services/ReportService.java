@@ -922,7 +922,7 @@ public class ReportService {
                 + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("date", "Ngày dữ liệu");
+        columns.put("EXCU_DATE", "Ngày dữ liệu");
         columns.put("branch", "CN PHT");
         columns.put("DATE_OPEN", "Ngày khai báo thông tin");
         columns.put("CLIENT_NUMBER", "CIF");
@@ -934,9 +934,9 @@ public class ReportService {
         columns.put("SL_THE_TIN_DUNG", "Số lượng thẻ TDDN");
         columns.put("Addre", "Địa chỉ DN");
         columns.put("E_MAIL", "Email DN");
-        columns.put("V_CS_ALL_ACNT_STATUS.STATUS_TYPE_CODE", "Mã lãi suất");
+        columns.put("MA_LAI_SUAT", "Mã lãi suất");
         columns.put("CONTR_STATUS", "Trạng thái TK thẻ Doanh nghiệp");
-        columns.put("FULLNAME_LIEN_HE", "Họ tên người liên hệ");
+        columns.put("FULLNAME1", "Họ tên người liên hệ");
         columns.put("ADDRESS_LINE_1", "Phòng/Ban công tác của người liên hệ");
         columns.put("PHONE_M", "SĐT liên lạc");
         columns.put("NGAY_SAO_KE_THE", "Ngày sao kê thẻ ");
@@ -1021,10 +1021,10 @@ public class ReportService {
         String fileName = "/FTPData/HSC/ATM_001_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
-        columns.put("CNQUANLY", "Chi nhánh");
+        columns.put("CAD", "Chi nhánh");
         columns.put("SL_TCD_ATM", "Số lượng ATM");
         columns.put("SL_TCD_CRM", "Số lượng CRM");
-        columns.put("CNQUANLY_SCD", "Branch quản lý");
+        columns.put("WAY4", "Branch quản lý");
         columns.put("SL_SCD_ATM", "Số lượng CRM");
         columns.put("SL_SCD_CRM", "Số lượng CRM");
 
@@ -1406,8 +1406,8 @@ public class ReportService {
         columns.put("w4_open_fee", "W4 Open Fee (14)");
         columns.put("w4_grace_fee", "W4 Grace Fee(15)");
         columns.put("w4_open_fee_instalment", "W4 Close Fee (16)");
-        columns.put("chenh_lech_du_phi", "W4 Open Fee Instalment (17)");
-        columns.put("chenh_lech_du_phi", "Chênh lệch (18)=(13)-(14)-(15)-(16)- (17)");
+        // columns.put("chenh_lech_du_phi", "W4 Open Fee Instalment (17)");
+        columns.put("chenh_lech_du_phi", "Chênh lệch (18)=(13)-(14)-(15)-(16)");
         columns.put("du_no_tra_gop_chua_phan_bo", "Cadencie (19)");
         columns.put("w4_waiting_principle", "W4 Waiting Principle (20)");
         columns.put("so_sanh_du_no_tra_gop_chua_phan_bo", "So sánh (Pass/ Fail)");
@@ -1701,7 +1701,7 @@ public class ReportService {
         columns.put("W4_BRANCH", "Way4");
         columns.put("SS_CN_PH", "So sánh (Pass/ Fail)");
         columns.put("STKT", "Cadencie");
-        columns.put("CONTRACT_NUMBER", "Way4");
+        columns.put("STKT_W4", "Way4");
         columns.put("SS_STK_THE", "So sánh (Pass/ Fail)");
         columns.put("CUSTR_REF", "Cadencie");
         columns.put("CLIENT__ID", "Way4");
@@ -1725,14 +1725,14 @@ public class ReportService {
         columns.put("STATUS_TYPE_CODE", "Way4");
         columns.put("SS_GIAHAN_THE", "So sánh (Pass/ Fail)");
         columns.put("PIN_FAILS", "Cadencie");
-        columns.put("PIN2", "Way4");
+        columns.put("W4_PIN_FAILS", "Way4");
         columns.put("SS_PIN_FAIL", "So sánh (Pass/ Fail)");
-        columns.put("limit_code", "Cadencie");
-        columns.put("limit_code2", "Way4");
-        columns.put("SS_LIMIT_CODE", "So sánh (Pass/ Fail)");
+        columns.put("HAN_MUC_GIAO_DICH_CAD", "Cadencie");
+        columns.put("HAN_MUC_GIAO_DICH_W4", "Way4");
+        columns.put("HAN_MUC_GIAO_DICH_SS", "So sánh (Pass/ Fail)");
         columns.put("FEE_MONTH", "Cadencie");
-        columns.put("ADD_INFO_02", "Way4");
-        columns.put("SS_FEE", "So sánh (Pass/ Fail)");
+        columns.put("FEE_MONTH_W4", "Way4");
+        columns.put("FEE_MONTH_SS", "So sánh (Pass/ Fail)");
 
         dynamicObject.setColumns(columns);
         Map<Integer, Object> inputParams = new HashMap<>();
@@ -2041,14 +2041,14 @@ public class ReportService {
         columns.put("STK_THE_CAP_ISSUE", "Số tài khoản thẻ");
         columns.put("TEN_TK_CAP_ISSUE", "Tên tài khoản");
         columns.put("TRANG_THAI_TK_CAP_ISSUE", "Trạng thái tài khoản");
-        columns.put("card_nbr", "Số thẻ");
+        columns.put("CARD_NUMBER", "Số thẻ");
         columns.put("TRANG_THAI_THE_CAP_CARD", "Trạng thái thẻ");
-        columns.put("product", "Mã sản phẩm thẻ");
+        columns.put("MA_SP_THE_CAP_CARD", "Mã sản phẩm thẻ");
         columns.put("AM", "AM");
         columns.put("HMTD", "HMTD");
         columns.put("ClassCode", "ClassCode");
         columns.put("InterestCode", "Interest Code");
-        columns.put("fee_code", "Feecode");
+        columns.put("FEECODE", "Feecode");
         columns.put("ID_TSBD", "ID TSBĐ (nếu có)");
         columns.put("SO_NGAY_QUA_HAN", "Số ngày quá hạn");
         columns.put("NGAY_SAO_KE", "Ngày sao kê");
@@ -2508,7 +2508,7 @@ public class ReportService {
         columns.put("W4_OPEN_CASH", "W4 Open cash(2)");
         columns.put("W4_OPEN_SALE", "W4 Open Sale(3)");
         columns.put("W4_GRACE_CASH", "W4 Grace cash (4)");
-        columns.put("W4_OPEN_SALE", "W4 Grace sale (5)");
+        columns.put("W4_GRACE_SALE", "W4 Grace sale (5)");
         columns.put("W4_CLOSE_CASH", "W4 Close Cash (6)");
         columns.put("W4_CLOSE_SALE", "W4 Close Sale(7)");
         columns.put("W4_OPEN_PRIN_INS", "W4 Open principle Instalment(7)");
@@ -2520,7 +2520,7 @@ public class ReportService {
         columns.put("DU_PHI", "Cadencie (13) Phí");
         columns.put("W4_OPEN_FEE", "W4 Open Fee (14)");
         columns.put("W4_GRACE_FEE", "W4 Grace Fee(15)");
-        columns.put("1", "W4 Close Fee (16)");
+        columns.put("W4_CLOSE_FEE", "W4 Close Fee (16)");
         columns.put("W4_OPEN_FEE_INSTALMENT", "W4 Open Fee Instalment (17)");
         columns.put("CHENH_LECH_DU_PHI", "Chênh lệch (18)=(13)-(14)-(15)-(16)- (17)");
         columns.put("DU_NO_TRA_GOP_CHUA_PHAN_BO", "Cadencie (19)");
@@ -3005,7 +3005,7 @@ public class ReportService {
 
         excelGenerator.writeExcel(fileName);
     }
-//  ----- HERE
+
     public static void ACQ_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
@@ -3425,7 +3425,7 @@ public class ReportService {
         columns.put("ist_tran_amount", "IST");
         columns.put("w4_tran_amount", "WAY4");
         columns.put("so_sanh_tran_amount", "Check (True/ False)");
-        columns.put("srn", "SRN (Source Registration Number)");
+        columns.put("SOURCE_REG_NUM", "SRN (Source Registration Number)");
         columns.put("target_channel", "Target channel");
         columns.put("source_channel", "Source channel");
 
@@ -3697,24 +3697,24 @@ public class ReportService {
         columns.put("trang_thai_tk_cad", "Cadencie");
         columns.put("trang_thai_tk_way4", "Way4");
         columns.put("SS_trang_thai_tk", "So sánh (Pass/ Fail)");
-        columns.put("feecode_cad", "Cadencie");
-        columns.put("feecode_way4", "Way4");
-        columns.put("SS_feecode", "So sánh (Pass/ Fail)");
         columns.put("feemonth_cad", "Cadencie");
         columns.put("feemonth_way4", "Way4");
         columns.put("SS_feemonth", "So sánh (Pass/ Fail)");
-        columns.put("1", "Cadencie");
-        columns.put("2", "Way4");
-        columns.put("3", "So sánh (Pass/ Fail)");
+        columns.put("MUC_PHI_TN_CAD", "Cadencie");
+        columns.put("MUC_PHI_TN_W4", "Way4");
+        columns.put("SS_MUC_PHI_TN", "So sánh (Pass/ Fail)");
         columns.put("fee_delay_cad", "Cadencie");
         columns.put("fee_delay_way4", "Way4");
         columns.put("SS_feedelay", "So sánh (Pass/ Fail)");
         columns.put("delay_active_cad", "Cadencie");
         columns.put("delay_active_way4", "Way4");
         columns.put("SS_delay_active", "So sánh (Pass/ Fail)");
-        // columns.put("classcode_cad", "Cadencie");
-        // columns.put("classcode_way4", "Way4");
-        // columns.put("SS_classcode", "So sánh (Pass/ Fail)");
+        // columns.put("feecode_cad", "Cadencie");
+        // columns.put("feecode_way4", "Way4");
+        // columns.put("SS_feecode", "So sánh (Pass/ Fail)");
+        columns.put("classcode_cad", "Cadencie");
+        columns.put("classcode_way4", "Way4");
+        columns.put("SS_classcode", "So sánh (Pass/ Fail)");
         columns.put("tk_lien_ket_1_cad", "Cadencie");
         columns.put("tk_lien_ket_1_way", "Way4");
         columns.put("SS_tk_lien_ket_1", "So sánh (Pass/ Fail)");
@@ -3891,9 +3891,9 @@ public class ReportService {
         columns.put("feemonth_cad", "Cadencie");
         columns.put("feemonth_way4", "Way4");
         columns.put("SS_feemonth", "So sánh (Pass/ Fail)");
-        columns.put("29", "Cadencie");
-        columns.put("30", "Way4");
-        columns.put("31", "So sánh (Pass/ Fail)");
+        columns.put("MUC_PHI_TN", "Cadencie");
+        columns.put("MUC_PHI_TN_W4", "Way4");
+        columns.put("SS_MUC_PHI_TN", "So sánh (Pass/ Fail)");
         columns.put("fee_delay_cad", "Cadencie");
         columns.put("fee_delay_way4", "Way4");
         columns.put("SS_fee_delay", "So sánh (Pass/ Fail)");
@@ -3912,9 +3912,9 @@ public class ReportService {
         columns.put("HMTD_cad", "Cadencie");
         columns.put("HMTD_way4", "Way4");
         columns.put("SS_HMTD", "So sánh (Pass/ Fail)");
-        columns.put("50", "Cadencie");
-        columns.put("51", "Way4");
-        columns.put("52", "So sánh (Pass/ Fail)");
+        columns.put("NGAY_SAO_KE", "Cadencie");
+        columns.put("NGAY_SAO_KE_W4", "Way4");
+        columns.put("SS_NGAY_SAO_KE", "So sánh (Pass/ Fail)");
         columns.put("tk_trich_no_td_cad", "Cadencie");
         columns.put("tk_trich_no_td_way4", "Way4");
         columns.put("SS_tk_trich_no_td", "So sánh (Pass/ Fail)");
@@ -4841,7 +4841,7 @@ public class ReportService {
         columns.put("MA_CN", "Mã CN");
         columns.put("MA_PHONG_BAN", "Mã phòng/ban (PGD/TSC CN)");
         columns.put("MA_KHACH_HANG", "Mã KH (Tổng hợp theo ZCOMCODE - CIF)");
-        columns.put("PL", "Loại thẻ (phân loại theo TCT)");
+        columns.put("LOAI_THE", "Loại thẻ (phân loại theo TCT)");
         columns.put("DU_NO_GOC_TRONG_HAN_CAD", "Dư nợ gốc trong hạn");
         columns.put("DU_NO_GOC_QUA_HAN_CAD", "Dư nợ gốc quá hạn");
         columns.put("LAI_DU_NO_CAD", "Lãi");
@@ -5009,10 +5009,10 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        // List<DynamicObject> dynamicObjects =
-        // databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
-        // inputParams, outParams);
-        List<DynamicObject> dynamicObjects = new ArrayList<>();
+        List<DynamicObject> dynamicObjects =
+        databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
+        inputParams, outParams);
+        // List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
             dynamicObject1.setColumns(columns);
