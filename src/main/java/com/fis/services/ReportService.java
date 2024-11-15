@@ -790,14 +790,14 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
 
         for (int i = 1; i < 9; i++) {
-            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i-1]);
+            headerRow.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
             headerRow.getCell(i).setCellStyle(cellStyle);
             headerRow2.createCell(i).setCellStyle(cellStyle);
             // sheet.autoSizeColumn(i);
             sheet.addMergedRegion(new CellRangeAddress(6, 7, i, i));
         }
         for (int i = 9; i < columns.size(); i++) {
-            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i-1]);
+            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
             headerRow2.getCell(i).setCellStyle(cellStyle);
             headerRow.createCell(i).setCellStyle(cellStyle);
         }
@@ -3005,7 +3005,7 @@ public class ReportService {
 
         excelGenerator.writeExcel(fileName);
     }
-
+//  ----- HERE
     public static void ACQ_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
@@ -3549,21 +3549,21 @@ public class ReportService {
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
         columns.put("BDS", "BDS");
-        columns.put("tong_cif_truoc_chuyen_doi", "Tổng trước chuyển đổi");
-        columns.put("tong_cif_khong_chuyen_doi", "Tổng không chuyển đổi");
-        columns.put("tong_cif_duoc_chuyen_doi", "Tổng được chuyển đổi");
-        columns.put("tong_cif_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
-        columns.put("tong_cif_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
-        columns.put("tong_merchant_truoc_chuyen_doi", "Tổng trước chuyển đổi");
-        columns.put("tong_merchant_khong_chuyen_doi", "Tổng không chuyển đổi");
-        columns.put("tong_merchant_duoc_chuyen_doi", "Tổng được chuyển đổi");
-        columns.put("tong_merchant_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
-        columns.put("tong_merchant_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
-        columns.put("tong_device_truoc_chuyen_doi", "Tổng trước chuyển đổi");
-        columns.put("tong_device_khong_chuyen_doi", "Tổng không chuyển đổi");
-        columns.put("tong_device_duoc_chuyen_doi", "Tổng được chuyển đổi");
-        columns.put("tong_device_chuyen_doi_thanh_cong", "Tổng chuyển đổi thành công");
-        columns.put("tong_device_chuyen_doi_khong_thanh_cong", "Tổng chuyển đổi không thành công");
+        columns.put("TONG_CIF_TRUOC_CHUYEN_DOI", "Tổng trước chuyển đổi");
+        columns.put("TONG_CIF_KHONG_CHUYEN_DOI", "Tổng không chuyển đổi");
+        columns.put("TONG_CIF_DUOC_CHUYEN_DOI", "Tổng được chuyển đổi");
+        columns.put("TONG_CIF_CHUYEN_DOI_THANH_CONG", "Tổng chuyển đổi thành công");
+        columns.put("TONG_CIF_CHUYEN_DOI_KHONG_THANH_CONG", "Tổng chuyển đổi không thành công");
+        columns.put("TONG_MERCHANT_TRUOC_CHUYEN_DOI", "Tổng trước chuyển đổi");
+        columns.put("TONG_MERCHANT_KHONG_CHUYEN_DOI", "Tổng không chuyển đổi");
+        columns.put("TONG_MERCHANT_DUOC_CHUYEN_DOI", "Tổng được chuyển đổi");
+        columns.put("TONG_MERCHANT_CHUYEN_DOI_THANH_CONG", "Tổng chuyển đổi thành công");
+        columns.put("TONG_MERCHANT_CHUYEN_DOI_KHONG_THANH_CONG", "Tổng chuyển đổi không thành công");
+        columns.put("TONG_DEVICE_TRUOC_CHUYEN_DOI", "Tổng trước chuyển đổi");
+        columns.put("TONG_DEVICE_KHONG_CHUYEN_DOI", "Tổng không chuyển đổi");
+        columns.put("TONG_DEVICE_DUOC_CHUYEN_DOI", "Tổng được chuyển đổi");
+        columns.put("TONG_DEVICE_CHUYEN_DOI_THANH_CONG", "Tổng chuyển đổi thành công");
+        columns.put("TONG_DEVICE_CHUYEN_DOI_KHONG_THANH_CONG", "Tổng chuyển đổi không thành công");
 
         dynamicObject.setColumns(columns);
 
@@ -4052,40 +4052,40 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("cn_quan_ly_cad", "CAD");
-        columns.put("cn_quan_ly_way4", "Way4");
-        columns.put("SS_cn_quan_ly", "Check(True/ False)");
-        columns.put("merchant_id_cad", "CAD");
-        columns.put("merchant_id_way4", "Way4");
-        columns.put("SS_merchant_id", "Check(True/ False)");
-        columns.put("contract_name_way4", "Way4");
-        columns.put("contract_number_way4", "Way4");
-        columns.put("product_way4", "Way4");
-        columns.put("merchant_main_cad", "CAD");
-        columns.put("merchant_main_way4", "Way4");
-        columns.put("SS_merchant_main", "Check(True/ False)");
-        columns.put("merchant_lien_ket_cad", "CAD");
-        columns.put("merchant_lien_ket_way4", "Way4");
-        columns.put("SS_merchant_lien_ket", "Check(True/ False)");
-        columns.put("cif_cad", "CAD");
-        columns.put("cif_way4", "Way4");
-        columns.put("SS_cif", "Check(True/ False)");
-        columns.put("mcc_nguon_chuyen_doi", "CAD");
-        columns.put("mcc_sau_chuyen_doi", "Way4");
-        columns.put("SS_mcc", "Check(True/ False)");
-        columns.put("status_nguon_chuyen_doi", "CAD");
-        columns.put("status_sau_chuyen_doi", "Way4");
-        columns.put("SS_status", "Check(True/ False)");
-        columns.put("rbs_1_nguon_chuyen_doi", "CAD");
-        columns.put("rbs_1_sau_chuyen_doi", "Way4");
-        columns.put("SS_rbs", "Check(True/ False)");
-        columns.put("rbs_2_nguon_chuyen_doi", "CAD");
-        columns.put("rbs_2_sau_chuyen_doi", "Way4");
-        columns.put("SS_rbs_2", "Check(True/ False)");
-        columns.put("classifier_MMSTAR", "Way4");
-        columns.put("classifier_MMDP", "Way4");
+        columns.put("CN_QUAN_LY_CAD", "CAD");
+        columns.put("CN_QUAN_LY_WAY4", "Way4");
+        columns.put("SS_CN_QUAN_LY", "Check(True/ False)");
+        columns.put("MERCHANT_ID_CAD", "CAD");
+        columns.put("MERCHANT_ID_WAY4", "Way4");
+        columns.put("SS_MERCHANT_ID", "Check(True/ False)");
+        columns.put("CONTRACT_NAME_WAY4", "Way4");
+        columns.put("CONTRACT_NUMBER_WAY4", "Way4");
+        columns.put("PRODUCT_WAY4", "Way4");
+        columns.put("MERCHANT_MAIN_CAD", "CAD");
+        columns.put("MERCHANT_MAIN_WAY4", "Way4");
+        columns.put("SS_MERCHANT_MAIN", "Check(True/ False)");
+        columns.put("MERCHANT_LIEN_KET_CAD", "CAD");
+        columns.put("MERCHANT_LIEN_KET_WAY4", "Way4");
+        columns.put("SS_MERCHANT_LIEN_KET", "Check(True/ False)");
+        columns.put("CIF_CAD", "CAD");
+        columns.put("CIF_WAY4", "Way4");
+        columns.put("SS_CIF", "Check(True/ False)");
+        columns.put("MCC_NGUON_CHUYEN_DOI", "CAD");
+        columns.put("MCC_SAU_CHUYEN_DOI", "Way4");
+        columns.put("SS_MCC", "Check(True/ False)");
+        columns.put("STATUS_NGUON_CHUYEN_DOI", "CAD");
+        columns.put("STATUS_SAU_CHUYEN_DOI", "Way4");
+        columns.put("SS_STATUS", "Check(True/ False)");
+        columns.put("RBS_1_NGUON_CHUYEN_DOI", "CAD");
+        columns.put("RBS_1_SAU_CHUYEN_DOI", "Way4");
+        columns.put("SS_RBS", "Check(True/ False)");
+        columns.put("RBS_2_NGUON_CHUYEN_DOI", "CAD");
+        columns.put("RBS_2_SAU_CHUYEN_DOI", "Way4");
+        columns.put("SS_RBS_2", "Check(True/ False)");
+        columns.put("CLASSIFIER_MMSTAR", "Way4");
+        columns.put("CLASSIFIER_MMDP", "Way4");
         columns.put("classifier_MDR_fee", "Way4");
-        columns.put("classifier_add_info_01", "Way4");
+        columns.put("CLASSIFIER_ADD_INFO_01", "Way4");
 
         dynamicObject.setColumns(columns);
 
@@ -4229,43 +4229,43 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("mid_cad", "CAD");
-        columns.put("ccat", "Way4");
-        columns.put("clt", "Way4");
-        columns.put("cif_cad", "CAD");
-        columns.put("cif_prf", "PRF");
-        columns.put("cif_way4", "Way4");
-        columns.put("SS_cif", "Check (True/ False)");
-        columns.put("id_kh_prf", "PRF");
-        columns.put("id_kh_way4", "Way4");
-        columns.put("SS_id_kh", "Check (True/ False)");
-        columns.put("ten_kh_prf", "PRF");
-        columns.put("ten_kh_way4", "Way4");
-        columns.put("SS_ten_kh", "Check (True/ False)");
-        columns.put("dia_chi_kh_prf", "PRF");
-        columns.put("dia_chi_kh_way", "Way4");
-        columns.put("SS_dia_chi_kh", "Check (True/ False)");
-        columns.put("classifier_prf", "PRF");
-        columns.put("classifier_way4", "Way4");
-        columns.put("SS_classifier", "Check (True/ False)");
-        columns.put("sdt_mobile_prf", "PRF");
-        columns.put("sdt_mobile_way4", "Way4");
-        columns.put("SS_sdt_mobile", "Check (True/ False)");
+        columns.put("MID_CAD", "CAD");
+        columns.put("CCAT", "Way4");
+        columns.put("CLT", "Way4");
+        columns.put("CIF_CAD", "CAD");
+        columns.put("CIF_PRF", "PRF");
+        columns.put("CIF_WAY4", "Way4");
+        columns.put("SS_CIF", "Check (True/ False)");
+        columns.put("ID_KH_PRF", "PRF");
+        columns.put("ID_KH_WAY4", "Way4");
+        columns.put("SS_ID_KH", "Check (True/ False)");
+        columns.put("TEN_KH_PRF", "PRF");
+        columns.put("TEN_KH_WAY4", "Way4");
+        columns.put("SS_TEN_KH", "Check (True/ False)");
+        columns.put("DIA_CHI_KH_PRF", "PRF");
+        columns.put("DIA_CHI_KH_WAY", "Way4");
+        columns.put("SS_DIA_CHI_KH", "Check (True/ False)");
+        columns.put("CLASSIFIER_PRF", "PRF");
+        columns.put("CLASSIFIER_WAY4", "Way4");
+        columns.put("SS_CLASSIFIER", "Check (True/ False)");
+        columns.put("SDT_MOBILE_PRF", "PRF");
+        columns.put("SDT_MOBILE_WAY4", "Way4");
+        columns.put("SS_SDT_MOBILE", "Check (True/ False)");
         columns.put("SDT_WORK_PRF", "PRF");
         columns.put("SDT_WORK_WAY4", "Way4");
         columns.put("SS_SDT_WORK", "Check (True/ False)");
         columns.put("SDT_HOME_PRF", "PRF");
         columns.put("SDT_HOME_WAY4", "Way4");
         columns.put("SS_SDT_HOME", "Check (True/ False)");
-        columns.put("email_1_prf", "PRF");
-        columns.put("email_1_way4", "Way4");
-        columns.put("SS_email_1", "Check (True/ False)");
-        columns.put("email_2_prf", "PRF");
-        columns.put("email_2_way4", "Way4");
-        columns.put("SS_email_2", "Check (True/ False)");
-        columns.put("email_3_prf", "PRF");
-        columns.put("email_3_way4", "Way4");
-        columns.put("SS_email_3", "Check (True/ False)");
+        columns.put("EMAIL_1_PRF", "PRF");
+        columns.put("EMAIL_1_WAY4", "Way4");
+        columns.put("SS_EMAIL_1", "Check (True/ False)");
+        columns.put("EMAIL_2_PRF", "PRF");
+        columns.put("EMAIL_2_WAY4", "Way4");
+        columns.put("SS_EMAIL_2", "Check (True/ False)");
+        columns.put("EMAIL_3_PRF", "PRF");
+        columns.put("EMAIL_3_WAY4", "Way4");
+        columns.put("SS_EMAIL_3", "Check (True/ False)");
 
         dynamicObject.setColumns(columns);
 
@@ -4361,7 +4361,7 @@ public class ReportService {
 
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 4, 7));
 
-        String header[] = { "Số ID khách hàng (số CCCD)", "Tên KH",
+        String header[] = { "Số CIF KH tại BIDV", "Số ID khách hàng (số CCCD)", "Tên KH",
                 "Địa chỉ liên hệ tại cấp client đồng bộ từ PRF sang", "Classifier cho phân loại KH zcomcode",
                 "Số điện thoại Mobile", "Số điện thoại Work", "Số điện thoại Home", "Email người đại diện 1",
                 "Email người đại diện 2", "Email người đại diện 3" };
@@ -4383,32 +4383,32 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("cn_quan_ly_cad", "CAD");
-        columns.put("cn_quan_ly_way4", "Way4");
-        columns.put("SS_cn_quan_ly", "Check (True/ False)");
-        columns.put("terminal_id_cad", "CAD");
-        columns.put("terminal_id_way4", "Way4");
-        columns.put("SS_terminal_id", "Check (True/ False)");
-        columns.put("product_way4", "Way4");
-        columns.put("device_name_way4", "Way4");
-        columns.put("merchant_id_cad", "CAD");
-        columns.put("merchant_id_way4", "Way4");
-        columns.put("SS_merchant_id", "Check (True/ False)");
-        columns.put("cif_cad", "CAD");
-        columns.put("cif_way4", "Way4");
-        columns.put("SS_cif", "Check (True/ False)");
-        columns.put("mcc_cad", "CAD");
-        columns.put("mcc_way4", "Way4");
-        columns.put("SS_mcc", "Check (True/ False)");
-        columns.put("status_cad", "CAD");
-        columns.put("classifier_way4", "Way4");
-        columns.put("clt", "Check (True/ False)");
+        columns.put("CN_QUAN_LY_CAD", "CAD");
+        columns.put("CN_QUAN_LY_WAY4", "Way4");
+        columns.put("SS_CN_QUAN_LY", "Check (True/ False)");
+        columns.put("TERMINAL_ID_CAD", "CAD");
+        columns.put("TERMINAL_ID_WAY4", "Way4");
+        columns.put("SS_TERMINAL_ID", "Check (True/ False)");
+        columns.put("PRODUCT_WAY4", "Way4");
+        columns.put("DEVICE_NAME_WAY4", "Way4");
+        columns.put("MERCHANT_ID_CAD", "CAD");
+        columns.put("MERCHANT_ID_WAY4", "Way4");
+        columns.put("SS_MERCHANT_ID", "Check (True/ False)");
+        columns.put("CIF_CAD", "CAD");
+        columns.put("CIF_WAY4", "Way4");
+        columns.put("SS_CIF", "Check (True/ False)");
+        columns.put("MCC_CAD", "CAD");
+        columns.put("MCC_WAY4", "Way4");
+        columns.put("SS_MCC", "Check (True/ False)");
+        columns.put("CLASSIFIER_CAD", "CAD");
+        columns.put("CLASSIFIER_WAY4", "Way4");
+        columns.put("SS_CLASSIFIER", "Check (True/ False)");
         columns.put("ma_am_cad", "CAD");
         columns.put("ma_am_way4", "Way4");
         columns.put("SS_ma_am", "Check (True/ False)");
-        columns.put("mid_cad", "CAD");
-        columns.put("ccat", "Way4");
-        columns.put("clt2", "Check (True/ False)");
+        columns.put("STATUS_CAD", "CAD");
+        columns.put("STATUS_WAY4", "Way4");
+        columns.put("SS_STATUS", "Check (True/ False)");
         columns.put("postype_cad", "CAD");
         columns.put("postype_way4", "Way4");
         columns.put("SS_postype", "Check (True/ False)");
@@ -4542,65 +4542,65 @@ public class ReportService {
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
-        columns.put("merchant_id", "CAD");
-        columns.put("cif_cad", "CAD");
-        columns.put("cif_prf", "PRF");
-        columns.put("cif_way4", "Way4");
-        columns.put("SS_cif", "Check (True/ False)");
-        columns.put("ten_kh_prf", "PRF");
-        columns.put("ten_kh_way4", "Way4");
-        columns.put("SS_ten_kh", "Check (True/ False)");
-        columns.put("so_dkkd_prf", "PRF");
-        columns.put("so_dkkd_way4", "Way4");
-        columns.put("SS_so_dkkd", "Check (True/ False)");
-        columns.put("ma_so_thue_prf", "PRF");
-        columns.put("ma_so_thue_way4", "Way4");
-        columns.put("SS_ma_so_thue", "Check (True/ False)");
-        columns.put("dkkd_noi_cap_prf", "PRF");
-        columns.put("dkkd_noi_cap_way4", "Way4");
-        columns.put("SS_dkkd_noi_cap", "Check (True/ False)");
-        columns.put("dia_chi_kh_dkkd_prf", "PRF");
-        columns.put("dia_chi_kh_dkkd_way4", "Way4");
-        columns.put("SS_dia_chi_kh_dkkd", "Check (True/ False)");
-        columns.put("sdt_mobile_prf", "PRF");
-        columns.put("sdt_mobile_way4", "Way4");
-        columns.put("SS_sdt_mobile", "Check (True/ False)");
-        columns.put("sdt_work_prf", "PRF");
-        columns.put("sdt_work_way4", "Way4");
-        columns.put("SS_sdt_work", "Check (True/ False)");
-        columns.put("sdt_home_prf", "PRF");
-        columns.put("sdt_home_way4", "Way4");
-        columns.put("SS_sdt_home", "Check (True/ False)");
-        columns.put("email_1_prf", "PRF");
-        columns.put("email_1_way4", "Way4");
-        columns.put("SS_email_1", "Check (True/ False)");
-        columns.put("email_2_prf", "PRF");
-        columns.put("email_2_way4", "Way4");
-        columns.put("SS_email_2", "Check (True/ False)");
-        columns.put("email_3_prf", "PRF");
-        columns.put("email_3_way4", "Way4");
-        columns.put("SS_email_3", "Check (True/ False)");
-        columns.put("kh_zcomcode_prf", "PRF");
-        columns.put("kh_zcomcode_way4", "Way4");
-        columns.put("SS_kh_zcomcode", "Check (True/ False)");
-        columns.put("nguoi_daidien_1_prf", "PRF");
-        columns.put("nguoi_daidien_1_way4", "Way4");
-        columns.put("SS_nguoi_daidien_1", "Check (True/ False)");
-        columns.put("chuc_vu_1_prf", "PRF");
-        columns.put("chuc_vu_1_way4", "Way4");
-        columns.put("SS_chuc_vu_1", "Check (True/ False)");
-        columns.put("nguoi_daidien_2_prf", "PRF");
-        columns.put("nguoi_daidien_2_way4", "Way4");
-        columns.put("SS_nguoi_daidien_2", "Check (True/ False)");
-        columns.put("chuc_vu_2_prf", "PRF");
-        columns.put("chuc_vu_2_way4", "Way4");
-        columns.put("SS_chuc_vu_2", "Check (True/ False)");
-        columns.put("nguoi_daidien_3_prf", "PRF");
-        columns.put("nguoi_daidien_3_way4", "Way4");
-        columns.put("SS_nguoi_daidien_3", "Check (True/ False)");
-        columns.put("chuc_vu_3_prf", "PRF");
-        columns.put("chuc_vu_3_way4", "Way4");
-        columns.put("SS_chuc_vu_3", "Check (True/ False)");
+        columns.put("MERCHANT_ID", "CAD");
+        columns.put("CIF_CAD", "CAD");
+        columns.put("CIF_PRF", "PRF");
+        columns.put("CIF_WAY4", "Way4");
+        columns.put("SS_CIF", "Check (True/ False)");
+        columns.put("TEN_KH_PRF", "PRF");
+        columns.put("TEN_KH_WAY4", "Way4");
+        columns.put("SS_TEN_KH", "Check (True/ False)");
+        columns.put("SO_DKKD_PRF", "PRF");
+        columns.put("SO_DKKD_WAY4", "Way4");
+        columns.put("SS_SO_DKKD", "Check (True/ False)");
+        columns.put("MA_SO_THUE_PRF", "PRF");
+        columns.put("MA_SO_THUE_WAY4", "Way4");
+        columns.put("SS_MA_SO_THUE", "Check (True/ False)");
+        columns.put("DKKD_NOI_CAP_PRF", "PRF");
+        columns.put("DKKD_NOI_CAP_WAY4", "Way4");
+        columns.put("SS_DKKD_NOI_CAP", "Check (True/ False)");
+        columns.put("DIA_CHI_KH_DKKD_PRF", "PRF");
+        columns.put("DIA_CHI_KH_DKKD_WAY4", "Way4");
+        columns.put("SS_DIA_CHI_KH_DKKD", "Check (True/ False)");
+        columns.put("SDT_MOBILE_PRF", "PRF");
+        columns.put("SDT_MOBILE_WAY4", "Way4");
+        columns.put("SS_SDT_MOBILE", "Check (True/ False)");
+        columns.put("SDT_WORK_PRF", "PRF");
+        columns.put("SDT_WORK_WAY4", "Way4");
+        columns.put("SS_SDT_WORK", "Check (True/ False)");
+        columns.put("SDT_HOME_PRF", "PRF");
+        columns.put("SDT_HOME_WAY4", "Way4");
+        columns.put("SS_SDT_HOME", "Check (True/ False)");
+        columns.put("EMAIL_1_PRF", "PRF");
+        columns.put("EMAIL_1_WAY4", "Way4");
+        columns.put("SS_EMAIL_1", "Check (True/ False)");
+        columns.put("EMAIL_2_PRF", "PRF");
+        columns.put("EMAIL_2_WAY4", "Way4");
+        columns.put("SS_EMAIL_2", "Check (True/ False)");
+        columns.put("EMAIL_3_PRF", "PRF");
+        columns.put("EMAIL_3_WAY4", "Way4");
+        columns.put("SS_EMAIL_3", "Check (True/ False)");
+        columns.put("KH_ZCOMCODE_PRF", "PRF");
+        columns.put("KH_ZCOMCODE_WAY4", "Way4");
+        columns.put("SS_KH_ZCOMCODE", "Check (True/ False)");
+        columns.put("NGUOI_DAIDIEN_1_PRF", "PRF");
+        columns.put("NGUOI_DAIDIEN_1_WAY4", "Way4");
+        columns.put("SS_NGUOI_DAIDIEN_1", "Check (True/ False)");
+        columns.put("CHUC_VU_1_PRF", "PRF");
+        columns.put("CHUC_VU_1_WAY4", "Way4");
+        columns.put("SS_CHUC_VU_1", "Check (True/ False)");
+        columns.put("NGUOI_DAIDIEN_2_PRF", "PRF");
+        columns.put("NGUOI_DAIDIEN_2_WAY4", "Way4");
+        columns.put("SS_NGUOI_DAIDIEN_2", "Check (True/ False)");
+        columns.put("CHUC_VU_2_PRF", "PRF");
+        columns.put("CHUC_VU_2_WAY4", "Way4");
+        columns.put("SS_CHUC_VU_2", "Check (True/ False)");
+        columns.put("NGUOI_DAIDIEN_3_PRF", "PRF");
+        columns.put("NGUOI_DAIDIEN_3_WAY4", "Way4");
+        columns.put("SS_NGUOI_DAIDIEN_3", "Check (True/ False)");
+        columns.put("CHUC_VU_3_PRF", "PRF");
+        columns.put("CHUC_VU_3_WAY4", "Way4");
+        columns.put("SS_CHUC_VU_3", "Check (True/ False)");
 
         dynamicObject.setColumns(columns);
 
@@ -4692,14 +4692,14 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 2, 5));
 
         String[] header = {
-                "Tên KH", "Số ĐKKD", "Mã số thuế", "Ngày ĐKKD + Cơ quan cấp",
+                "Tên KH", "Số ĐKKD", "Mã số thuế", "Ngày ĐKKD", "Cơ quan cấp",
                 "Địa chỉ khách hàng trên ĐKKD",
                 "Số điện thoại Mobile", "Số điện thoại Work", "Số điện thoại Home",
                 "Email người đại diện 1", "Email người đại diện 2", "Email người đại diện 3",
-                "Classifier cho phân loại KH zcomcode", "Người đại diện 1 (Gắn address_type của client)",
-                "Chức danh người đại diện 1", "Người đại diện 2 (Gắn address_type của client)",
-                "Chức danh người đại diện 2", "Người đại diện 3 (Gắn address_type của client)",
-                "Chức danh người đại diện 3"
+                "Classifier cho phân loại KH zcomcode", "Người đại diện 1",
+                "Chức danh", "Người đại diện 2",
+                "Chức danh", "Người đại diện 3",
+                "Chức danh"
         };
 
         for (int i = 6; i < columns.size(); i += 3) {
@@ -5009,9 +5009,10 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        // List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
-        //         inputParams, outParams);
-                List<DynamicObject> dynamicObjects = new ArrayList<>();
+        // List<DynamicObject> dynamicObjects =
+        // databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
+        // inputParams, outParams);
+        List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
             dynamicObject1.setColumns(columns);
