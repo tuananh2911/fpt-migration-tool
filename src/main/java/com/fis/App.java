@@ -3,8 +3,12 @@ package com.fis;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -85,10 +89,10 @@ public final class App {
         for (Branch branch : ds) {
             String folderPath = branch.getFolderPath();
             if (folderPath.contains("/FTPData")) {
-                folderPath = folderPath.substring(folderPath.indexOf("/FTPData"));
+                folderPath = folderPath.substring(folderPath.indexOf("FTPData"));
                 branch.setFolderPath(folderPath);
             } else {
-                branch.setFolderPath("/FTPData/");
+                branch.setFolderPath("FTPData/");
             }
         }
         // print title --- migrate
@@ -109,11 +113,11 @@ public final class App {
             }
             System.out.println();
         }
-        // -------------------
         System.out.println("-----------------------------------------------------------");
 
-        System.out.print("Tao bao cao (all - tat ca): ");
+        System.out.print("Tao bao cao (all - tat ca | exit - thoat): ");
         try (Scanner scanner = new Scanner(System.in)) {
+            ReportService reportService = new ReportService();
             String reportName = scanner.nextLine().trim();
 
             do {
@@ -121,6 +125,7 @@ public final class App {
 
                 boolean isReportNameInReportClassName = false;
                 boolean isReportNameInReportHSCClassName = false;
+                boolean isArrayName = false;
                 for (String report : reportClassName) {
                     if (report.equalsIgnoreCase(reportName)) {
                         isReportNameInReportClassName = true;
@@ -133,7 +138,17 @@ public final class App {
                         break;
                     }
                 }
+                String[] arrayName = reportName.split(",");
+                for (String report : allReport) {
+                    for (String name : arrayName) {
+                        if (report.equalsIgnoreCase(name.trim()) && arrayName.length > 1) {
+                            isArrayName = true;
+                            break;
+                        }
+                    }
+                }
                 if (!isReportNameInReportClassName && !isReportNameInReportHSCClassName
+                        && !isArrayName
                         && !reportName.equalsIgnoreCase("exit") && !reportName.equalsIgnoreCase("all")) {
                     System.out.println("Bao cao khong ton tai");
                     System.out.print("Tao bao cao: ");
@@ -145,6 +160,39 @@ public final class App {
                         // nhap branch code
                         System.out.print("Nhap branch code: ");
                         String branchCode = scanner.nextLine().trim();
+                        if (branchCode.equalsIgnoreCase("all")) {
+                            // Thread for each branch
+
+                            ExecutorService executor = Executors
+                                    .newFixedThreadPool(Integer.parseInt(thread_num.trim()));
+                            final String finalReportName = reportName;
+                            for (Branch branch : ds) {
+                                executor.execute(() -> {
+                                    Long _startTime = System.currentTimeMillis();
+                                    try {
+                                        logger.info("Thread " + Thread.currentThread().getId() + " "
+                                                + Thread.currentThread().getName() + " is working on " + finalReportName
+                                                + " - "
+                                                + branch.getBranchCode() + " - " + branch.getBranchName());
+                                        reportService.getClass().getMethod(finalReportName, Branch.class)
+                                                .invoke(reportService, branch);
+                                        Thread.sleep(50);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        long endTime = System.currentTimeMillis();
+                                        logger.info("Thread " + Thread.currentThread().getId() + " "
+                                                + Thread.currentThread().getName() + " finished working on "
+                                                + finalReportName + " - "
+                                                + branch.getBranchCode() + " - " + branch.getBranchName()
+                                                + " (Duration: " + (endTime - _startTime) + " ms)");
+                                    }
+                                });
+                            }
+
+                            Thread.sleep(50);
+                            continue;
+                        }
                         Branch branch = null;
                         for (Branch b : ds) {
                             if (b.getBranchCode().equalsIgnoreCase(branchCode)) {
@@ -158,7 +206,7 @@ public final class App {
                             reportName = scanner.nextLine();
                             continue;
                         }
-                        ReportService.class.getMethod(reportName, Branch.class).invoke(null, branch);
+                        reportService.getClass().getMethod(reportName, Branch.class).invoke(reportService, branch);
                         Thread.sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -170,7 +218,7 @@ public final class App {
                 } else if (isReportNameInReportHSCClassName) {
                     try {
                         logger.info("Start working on " + reportName);
-                        ReportService.class.getMethod(reportName.toUpperCase()).invoke(null);
+                        reportService.getClass().getMethod(reportName.toUpperCase()).invoke(reportService);
                         Thread.sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -179,20 +227,23 @@ public final class App {
                         logger.info(
                                 "Finished working on " + reportName + " (Duration: " + (endTime - startTime) + " ms)");
                     }
+                } else if (isArrayName) {
+                    // export arrayName
+                    exportListReport(ds, reportService, arrayName);
                 } else if (reportName.equalsIgnoreCase("all")) {
-                    exportAll(ds);
+                    exportAll(ds, reportService);
                     break;
                 } else if (reportName.equalsIgnoreCase("exit")) {
                     break;
                 }
-                System.out.print("Tao bao cao (all - tat ca): ");
+                System.out.print("Tao bao cao (all - tat ca | exit - thoat): ");
                 reportName = scanner.nextLine();
             } while (!reportName.equalsIgnoreCase("exit"));
         }
 
     }
 
-    public static void exportAll(List<Branch> ds) {
+    public static void exportAll(List<Branch> ds, ReportService reportService) {
         ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(thread_num.trim()));
 
         ProgressTracker progressTracker = new ProgressTracker(ds.size() *
@@ -205,7 +256,7 @@ public final class App {
                 try {
                     logger.info("Thread " + Thread.currentThread().getId() + " "
                             + Thread.currentThread().getName() + " is working on " + report);
-                    ReportService.class.getMethod(report).invoke(null);
+                    reportService.getClass().getMethod(report).invoke(reportService);
                     Thread.sleep(50);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -227,7 +278,7 @@ public final class App {
                             logger.info("Thread " + Thread.currentThread().getId() + " "
                                     + Thread.currentThread().getName() + " is working on " + report + " - "
                                     + branch.getBranchCode() + " - " + branch.getBranchName());
-                            ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
+                            reportService.getClass().getMethod(report, Branch.class).invoke(reportService, branch);
                             Thread.sleep(50);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -251,7 +302,90 @@ public final class App {
                         System.out.println("Thread " + Thread.currentThread().getId() + " "
                                 + Thread.currentThread().getName() + " is working on " + report + " - "
                                 + branch.getBranchCode() + " - " + branch.getBranchName());
-                        ReportService.class.getMethod(report, Branch.class).invoke(null, branch);
+                        reportService.getClass().getMethod(report, Branch.class).invoke(reportService, branch);
+                        Thread.sleep(50);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        long endTime = System.currentTimeMillis();
+                        progressTracker.taskCompleted();
+                        System.out.println("Thread " + Thread.currentThread().getId() + " "
+                                + Thread.currentThread().getName() + " finished working on " + report + " - "
+                                + branch.getBranchCode() + " - " + branch.getBranchName()
+                                + " (Duration: " + (endTime - startTime) + " ms)");
+                        logger.info("Thread " + Thread.currentThread().getId() + " "
+                                + Thread.currentThread().getName() + " finished working on " + report + " - "
+                                + branch.getBranchCode() + " - " + branch.getBranchName()
+                                + " (Duration: " + (endTime - startTime) + " ms)");
+                    }
+                });
+            }
+        }
+
+        while (!progressTracker.isFinished()) {
+            try {
+                // add time delay to reduce CPU usage
+                System.out.print("\0337"); // Save cursor position
+                System.out.print("\033[999B"); // Move cursor to the bottom of the terminal
+                System.out.print("\033[2K"); // Clear the entire line
+                System.out.printf("Progress: %d%% %s",
+                        progressTracker.getProgressPercentage(),
+                        progressTracker.getProgressBar());
+                System.out.print("\0338"); // Restore cursor position
+
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        executor.shutdown();
+    }
+
+    public static void exportListReport(List<Branch> ds, ReportService reportService, String[] reportName) {
+        ExecutorService executor = Executors.newFixedThreadPool(Integer.parseInt(thread_num.trim()));
+
+        Set<String> reportSet1 = new HashSet<>(Arrays.asList(reportClassName));
+        Set<String> reportSet2 = new HashSet<>(Arrays.asList(reportHSCClassName));
+        List<String> reportList = new ArrayList<>();
+        List<String> reportListHSC = new ArrayList<>();
+        for (String report : reportName) {
+            if (reportSet1.contains(report.trim())) {
+                reportList.add(report.trim());
+            } else if (reportSet2.contains(report.trim())) {
+                reportListHSC.add(report.trim());
+            }
+        }
+        ProgressTracker progressTracker = new ProgressTracker(ds.size() * reportList.size() + reportListHSC.size());
+
+        for (String report : reportListHSC) {
+            executor.execute(() -> {
+                long startTime = System.currentTimeMillis();
+                try {
+                    logger.info("Thread " + Thread.currentThread().getId() + " "
+                            + Thread.currentThread().getName() + " is working on " + report);
+                    reportService.getClass().getMethod(report).invoke(reportService);
+                    Thread.sleep(50);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    long endTime = System.currentTimeMillis();
+                    progressTracker.taskCompleted();
+                    logger.info("Thread " + Thread.currentThread().getId() + " "
+                            + Thread.currentThread().getName() + " finished working on " + report
+                            + " (Duration: " + (endTime - startTime) + " ms)");
+                }
+            });
+        }
+        for (Branch branch : ds) {
+            for (String report : reportList) {
+                executor.execute(() -> {
+                    long startTime = System.currentTimeMillis();
+                    try {
+                        System.out.println("Thread " + Thread.currentThread().getId() + " "
+                                + Thread.currentThread().getName() + " is working on " + report + " - "
+                                + branch.getBranchCode() + " - " + branch.getBranchName());
+                        reportService.getClass().getMethod(report, Branch.class).invoke(reportService, branch);
                         Thread.sleep(50);
                     } catch (Exception e) {
                         e.printStackTrace();

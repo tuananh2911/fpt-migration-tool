@@ -1,6 +1,5 @@
 package com.fis.services;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,25 +13,28 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.fis.domain.Branch;
 
-import oracle.net.aso.c;
-
 public class ReportService {
 
-    private static DatabaseService databaseService = new DatabaseService();
+    private final DatabaseService databaseService = new DatabaseService();
 
-    private final static String MAX_NUM_ROWS = "600000";
+    private final String MAX_NUM_ROWS = "600000";
 
-    public static void initData() throws SQLException {
+    public void initData() throws SQLException {
         databaseService.initData("REPORT_MIGRATE", "INIT_DATA");
     }
 
-    public static void CMS018Report() throws FileNotFoundException, IOException, InterruptedException {
+    public void CMS018Report() throws FileNotFoundException, IOException, InterruptedException {
         String fileName = "CMS018Report.xlsx";
 
         // new dynacmic object
@@ -131,11 +133,11 @@ public class ReportService {
 
     }
 
-    public static void ISS_011(Branch branch)
+    public void ISS_011(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ISS_011_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -204,7 +206,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
         // System.out.println("Start generate sheet");
-        Sheet sheet = excelGenerator.generateExcel(6, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
         // System.out.println("End generate sheet");
 
         // title row 0
@@ -245,24 +247,16 @@ public class ReportService {
         row4.createCell(5).setCellValue("Ngày báo cáo: " + dateStr);
         row4.getCell(5).setCellStyle(styleBold);
 
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(9).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(14).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-        eRow.getCell(14).setCellStyle(styleBold);
-        // System.out.println("Start write excel");
+        excelGenerator.generateExcel(6, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void ISS_012(Branch branch)
+    public void ISS_012(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ISS_012_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -332,7 +326,7 @@ public class ReportService {
         // System.out.println(dynamicObjects.get(0).getProperties());
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(6, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
         // title row 0
         Row titleRow = sheet.createRow(0);
         titleRow.createCell(0)
@@ -372,26 +366,17 @@ public class ReportService {
         row4.createCell(5).setCellValue("Ngày báo cáo: " + dateStr);
         row4.getCell(5).setCellStyle(styleBold);
 
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(9).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(14).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-        eRow.getCell(14).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(6, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
-
     }
 
-    public static void ATM_002()
+    public void ATM_002()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ATM_002_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ATM_002_" + dateFN + ".xlsx";
 
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
@@ -468,10 +453,10 @@ public class ReportService {
 
     }
 
-    public static void ACQ_009(Branch branch)
+    public void ACQ_009(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ACQ_009_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -522,7 +507,7 @@ public class ReportService {
         // dynamicObject2.getProperties().put("1", "");
         // }
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(8, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0
         Row titleRow = sheet.createRow(0);
@@ -608,10 +593,12 @@ public class ReportService {
         eRow.getCell(9).setCellStyle(styleBold);
         eRow.getCell(14).setCellStyle(styleBold);
 
+        excelGenerator.generateExcel(8, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
+
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_007() throws FileNotFoundException, IOException, InterruptedException {
+    public void GL_007() throws FileNotFoundException, IOException, InterruptedException {
 
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
@@ -679,9 +666,9 @@ public class ReportService {
         row5.createCell(columns.size()).setCellValue("Loại tiền: ");
 
         sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 12));
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_007_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_007_" + dateFN + ".xlsx";
 
         int endRow = 6 + dynamicObjects.size() + 2;
         Row eRow = sheet.createRow(endRow);
@@ -695,12 +682,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_005_ISS_CT() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void GL_005_ISS_CT() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_005_ISS_CT_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_005_ISS_CT_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("ma_cn", "Mã CN CAD");
@@ -810,11 +797,11 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_009(Branch branch)
+    public void ISS_009(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ISS_009_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -871,7 +858,7 @@ public class ReportService {
         // map dynamicObjects add properties value a = "" if a is null
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0 title
         Row titleRow = sheet.createRow(0);
@@ -897,25 +884,17 @@ public class ReportService {
         CellStyle styleBold = sheet.getWorkbook().createCellStyle();
         styleBold.setFont(fontBold);
 
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(9).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(14).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-        eRow.getCell(14).setCellStyle(styleBold);
-
         // merge cell for header
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 15));
+        excelGenerator.generateExcel(7, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_010(Branch branch)
+    public void ISS_010(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ISS_010_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -962,7 +941,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0 title
         Row titleRow = sheet.createRow(0);
@@ -998,27 +977,18 @@ public class ReportService {
         row2.getCell(1).setCellStyle(styleBold);
         row2.getCell(15).setCellStyle(styleBold);
         row4.getCell(5).setCellStyle(styleBold);
-
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(9).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(14).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-        eRow.getCell(14).setCellStyle(styleBold);
-
         // merge cell for header
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 1, 15));
+        excelGenerator.generateExcel(7, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ATM_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ATM_001_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ATM_001_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CAD", "Chi nhánh");
@@ -1049,7 +1019,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0
         Row code = sheet.createRow(0);
@@ -1081,16 +1051,16 @@ public class ReportService {
         fontBold.setBold(true);
         CellStyle styleBold = sheet.getWorkbook().createCellStyle();
         styleBold.setFont(fontBold);
-
+        excelGenerator.generateExcel(7, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_001_0() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_001_0() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_001_0_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_001_0_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("BDS", "BDS");
@@ -1127,7 +1097,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0
         Row titleRow = sheet.createRow(0);
@@ -1202,30 +1172,17 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
 
-        Font fontBold = sheet.getWorkbook().createFont();
-        fontBold.setBold(true);
-        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
-        styleBold.setFont(fontBold);
-
-        int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(0).setCellValue("LẬP BẢNG");
-        eRow.createCell(4).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(9).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(0).setCellStyle(styleBold);
-        eRow.getCell(4).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_001_1()
+    public void ISS_001_1()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_001_1_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_001_1_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("branch", "BDS");
@@ -1259,7 +1216,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -1360,28 +1317,15 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(6, 7, 2, 2));
 
-        Font fontBold = sheet.getWorkbook().createFont();
-        fontBold.setBold(true);
-        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
-        styleBold.setFont(fontBold);
-
-        int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(
-                endRow);
-        eRow.createCell(0).setCellValue("LẬP BẢNG");
-        eRow.createCell(4).setCellValue("NGƯỜI KIỂM SOÁT");
-
-        eRow.getCell(0).setCellStyle(styleBold);
-        eRow.getCell(4).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_001_2() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_001_2() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_001_2_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_001_2_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("branch", "BDS");
@@ -1430,7 +1374,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row 0
         Row titleRow = sheet.createRow(0);
@@ -1518,26 +1462,17 @@ public class ReportService {
         Row sumRow = sheet.createRow(7 + dynamicObjects.size());
         sumRow.createCell(0).setCellValue("SUM");
 
-        // end
-        int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(0).setCellValue("LẬP BẢNG");
-        eRow.createCell(4).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(9).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(0).setCellStyle(style);
-        eRow.getCell(4).setCellStyle(style);
-        eRow.getCell(9).setCellStyle(style);
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void ISS_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_002_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_002_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CUSTR_REF", "Số CIF");
@@ -1685,12 +1620,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public void ISS_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_005_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_005_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CARD_NBR", "Số thẻ");
@@ -1769,8 +1704,7 @@ public class ReportService {
             }
         }
         ExcelGenerator excelGenerator = new ExcelGenerator();
-
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -1851,25 +1785,16 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
 
-        int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(6).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(9).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(6).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public void ISS_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_003_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_003_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CUSTR_REF", "Số CIF");
@@ -1929,7 +1854,7 @@ public class ReportService {
         }
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -2011,24 +1936,15 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 0, 0));
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
 
-        int endRow = 9 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(6).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(9).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(6).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_013(Branch branch)
+    public void ISS_013(Branch branch)
             throws SQLException, FileNotFoundException, IOException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ISS_013_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN
@@ -2094,7 +2010,7 @@ public class ReportService {
         // });
         // }
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(6, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
         // title row 0
         Row titleRow = sheet.createRow(0);
         titleRow.createCell(0)
@@ -2133,25 +2049,17 @@ public class ReportService {
         row4.createCell(5).setCellValue("Ngày báo cáo: " + dateStr);
         row4.getCell(5).setCellStyle(styleBold);
 
-        int endRow = 6 + dynamicObjects.size() + 2;
-        Row eRow = sheet.createRow(endRow);
-        eRow.createCell(3).setCellValue("LẬP BẢNG");
-        eRow.createCell(9).setCellValue("NGƯỜI KIỂM SOÁT");
-        eRow.createCell(14).setCellValue("ĐẠI DIỆN CHI NHÁNH");
-        eRow.getCell(3).setCellStyle(styleBold);
-        eRow.getCell(9).setCellStyle(styleBold);
-        eRow.getCell(14).setCellStyle(styleBold);
-
+        excelGenerator.generateExcel(6, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void ISS_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_006_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_006_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("loai_the", "Loại thẻ");
@@ -2181,7 +2089,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -2278,15 +2186,16 @@ public class ReportService {
         eRow.getCell(5).setCellValue(sum2.toString());
         eRow.getCell(6).setCellValue(sum3.toString());
 
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_007() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_007() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_007_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_007_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("loai_the", "Loại thẻ");
@@ -2333,7 +2242,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(1);
@@ -2416,16 +2325,17 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 1, 1));
         sheet.addMergedRegion(new CellRangeAddress(5, 6, 2, 2));
 
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ATM_003()
+    public void ATM_003()
             throws FileNotFoundException, IOException, InterruptedException, SQLException, InterruptedException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ATM_003_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ATM_003_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CONTRACT_NUMBER", "Terminal ID");
@@ -2462,7 +2372,7 @@ public class ReportService {
         }
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.generateExcel(5, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // ma bao cao
         Row row1 = sheet.createRow(0);
@@ -2481,17 +2391,17 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, columns.size()));
 
         // no date
-
+        excelGenerator.generateExcel(5, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
 
     }
 
-    public static void ISS_008() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_008() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_008_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_008_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         // columns.put("TDQT/GNQT", "Số tài khoản thẻ");
@@ -2664,12 +2574,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_008_1() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_008_1() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_008_1_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_008_1_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         // columns.put("TDQT/GNQT", "Số tài khoản thẻ");
@@ -2802,12 +2712,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_007() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_007() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_007_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_007_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -2847,7 +2757,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(5, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -2925,15 +2835,16 @@ public class ReportService {
             headerRow2.getCell(i).setCellStyle(cellStyle);
         }
 
+        excelGenerator.generateExcel(5, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_008() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_008() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/AQC_008_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/AQC_008_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("cn_quan_ly_way4", "CN quản lý");
@@ -2965,7 +2876,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(5, dynamicObjects, false);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -3003,15 +2914,16 @@ public class ReportService {
         row1.getCell(0).setCellStyle(styleBold);
         row2.getCell(0).setCellStyle(styleBold);
 
+        excelGenerator.generateExcel(5, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_006() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_006_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_006_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
 
@@ -3175,11 +3087,11 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_010(Branch branch)
+    public void ACQ_010(Branch branch)
             throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
         String fileName = branch.getFolderPath() + "ACQ_010_" + branch.getBranchCode() + "_" + branch.getBranchName()
                 + "_" + dateFN + ".xlsx";
@@ -3390,12 +3302,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_011() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_011() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_011_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_011_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "IST");
@@ -3446,7 +3358,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -3535,16 +3447,16 @@ public class ReportService {
             sheet.setColumnWidth(i, 20 * 256);
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
-
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_001() throws FileNotFoundException, IOException, InterruptedException, SQLException {
 
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_001_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_001_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -3582,7 +3494,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(5, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -3664,14 +3576,15 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(3, 3, 7, 11));
         sheet.addMergedRegion(new CellRangeAddress(3, 3, 12, columns.size() - 1));
 
+        excelGenerator.generateExcel(5, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_004_1() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_004_1() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_004_1_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_004_1_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -3852,11 +3765,11 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ISS_004() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ISS_004() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ISS_004_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ISS_004_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4044,11 +3957,11 @@ public class ReportService {
 
     }
 
-    public static void ACQ_004() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public void ACQ_004() throws SQLException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_004_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_004_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4098,7 +4011,7 @@ public class ReportService {
         // System.out.println(dynamicObjects.get(0).getProperties());
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -4218,14 +4131,15 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 25, 27));
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 28, 30));
         sheet.addMergedRegion(new CellRangeAddress(4, 4, 31, 33));
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void ACQ_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_002_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_002_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4284,7 +4198,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
 
@@ -4372,14 +4286,15 @@ public class ReportService {
             sheet.addMergedRegion(new CellRangeAddress(5, 5, i, i + 2));
         }
 
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public void ACQ_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_005_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_005_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4446,7 +4361,7 @@ public class ReportService {
 
         ExcelGenerator excelGenerator = new ExcelGenerator();
 
-        Sheet sheet = excelGenerator.generateExcel(7, dynamicObjects, true);
+        Sheet sheet = excelGenerator.getSheet("Report");
 
         // title row
         Row titleRow = sheet.createRow(0);
@@ -4531,14 +4446,15 @@ public class ReportService {
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 1, 3));
         sheet.addMergedRegion(new CellRangeAddress(5, 5, 4, 6));
 
+        excelGenerator.generateExcel(7, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void ACQ_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
+    public void ACQ_003() throws SQLException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/ACQ_003_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/ACQ_003_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4711,12 +4627,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_005_ISS_TH()
+    public void GL_005_ISS_TH()
             throws SQLException, NumberFormatException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_005_ISS_TH_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_005_ISS_TH_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4830,11 +4746,11 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_001_ISS() throws FileNotFoundException, IOException, InterruptedException, SQLException {
+    public void GL_001_ISS() throws FileNotFoundException, IOException, InterruptedException, SQLException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_001_ISS_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_001_ISS_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -4968,12 +4884,12 @@ public class ReportService {
         excelGenerator.writeExcel(fileName);
     }
 
-    public static void GL_002_ISS_KH()
+    public void GL_002_ISS_KH()
             throws SQLException, NumberFormatException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_002_ISS_KH_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_002_ISS_KH_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
@@ -5009,9 +4925,8 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        List<DynamicObject> dynamicObjects =
-        databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
-        inputParams, outParams);
+        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "GL_002_ISS_KH", columns,
+                inputParams, outParams);
         // List<DynamicObject> dynamicObjects = new ArrayList<>();
         if (dynamicObjects.size() == 0) {
             DynamicObject dynamicObject1 = new DynamicObject();
@@ -5112,12 +5027,12 @@ public class ReportService {
 
     }
 
-    public static void GL_004_ISS_KH()
+    public void GL_004_ISS_KH()
             throws SQLException, NumberFormatException, FileNotFoundException, IOException, InterruptedException {
         Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyy");
+        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = "/FTPData/HSC/GL_004_ISS_KH_" + dateFN + ".xlsx";
+        String fileName = "FTPData/HSC/GL_004_ISS_KH_" + dateFN + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("STT", "STT");
