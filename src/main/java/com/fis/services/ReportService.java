@@ -1,9 +1,13 @@
 package com.fis.services;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fis.types.JDBCResult;
+import com.fis.types.ReportParameters;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -139,9 +145,7 @@ public class ReportService {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = branch.getFolderPath() + "ISS_011_" + branch.getBranchCode() + "_" + branch.getBranchName()
-                + "_" + dateFN
-                + ".xlsx";
+
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("acct_style", "Loại thẻ");
@@ -186,15 +190,6 @@ public class ReportService {
         inputParams.put(1, branch.getBranchCode());
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
-        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_011", columns,
-                inputParams, outParams);
-        // List<DynamicObject> dynamicObjects = new ArrayList<>();
-        if (dynamicObjects.size() == 0) {
-            DynamicObject dynamicObject1 = new DynamicObject();
-            dynamicObject1.setColumns(columns);
-            dynamicObject1.setProperties(new LinkedHashMap<>());
-            dynamicObjects.add(dynamicObject1);
-        }
         // else {
         // dynamicObjects.forEach(dynamicObject1 -> {
         // if (dynamicObject1.getProperties().get("class_code") == null) {
@@ -204,51 +199,18 @@ public class ReportService {
         // }
         // System.out.println(dynamicObjects.size());
 
+
+
+        JDBCResult jdbcResult = databaseService.callProcedureV2("REPORT_MIGRATE", "ISS_011", columns,
+            inputParams, outParams);
+
+        JDBCResult jdbcResult2 = new JDBCResult(jdbcResult.getConnection(),null,"");
+        ;
+        String fileName = getFileName("ISS_011_",jdbcResult2,branch);
+        ResultSet resultSet = getResultSet(jdbcResult,2,inputParams);
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        // System.out.println("Start generate sheet");
-        Sheet sheet = excelGenerator.getSheet("Report");
-        // System.out.println("End generate sheet");
-
-        // title row 0
-        Row titleRow = sheet.createRow(0);
-        titleRow.createCell(0)
-                .setCellValue("BÁO CÁO CHI TIẾT THÔNG TIN THẺ TRƯỚC KHI CHUYỂN ĐỔI");
-        // font bold, size 16 for title
-        Font font = sheet.getWorkbook().createFont();
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 16);
-        CellStyle style = sheet.getWorkbook().createCellStyle();
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 35));
-
-        Font fontBold = sheet.getWorkbook().createFont();
-        fontBold.setBold(true);
-        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
-        styleBold.setFont(fontBold);
-
-        // date now format dd/MM/yyyy
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String dateStr = dateFormat.format(date);
-
-        // header row 1
-        Row row1 = sheet.createRow(1);
-        row1.createCell(1).setCellValue("Mã chi nhánh: " + branch.getBranchCode());
-        row1.getCell(1).setCellStyle(styleBold);
-        // header row 2
-        Row row2 = sheet.createRow(2);
-        row2.createCell(1).setCellValue("Tên chi nhánh: " + branch.getBranchName());
-        row2.createCell(15).setCellValue("Mã bc: ISS_011");
-        row2.getCell(1).setCellStyle(styleBold);
-        row2.getCell(15).setCellStyle(styleBold);
-
-        Row row4 = sheet.createRow(4);
-        row4.createCell(5).setCellValue("Ngày báo cáo: " + dateStr);
-        row4.getCell(5).setCellStyle(styleBold);
-
-        excelGenerator.generateExcel(6, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
-        excelGenerator.writeExcel(fileName);
+        ReportParameters rpParam = new ReportParameters(resultSet,fileName,columns,new String[0],"BÁO CÁO CHI TIẾT THÔNG TIN THẺ TRƯỚC KHI CHUYỂN ĐỔI",branch.getBranchCode(),branch.getBranchName(),"ISS_011",date);
+        excelGenerator.writeResultSetToCSV(rpParam);
 
     }
 
@@ -258,9 +220,6 @@ public class ReportService {
         Date date = new Date();
         DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
         String dateFN = dateFNFormat.format(date);
-        String fileName = branch.getFolderPath() + "ISS_012_" + branch.getBranchCode() + "_" + branch.getBranchName()
-                + "_" + dateFN
-                + ".xlsx";
         DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("acct_style", "Loại thẻ");
@@ -307,67 +266,18 @@ public class ReportService {
         List<Integer> outParams = new ArrayList<>();
         outParams.add(2);
 
-        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_012", columns,
-                inputParams, outParams);
 
-        dynamicObjects.forEach(dynamicObject1 -> {
-            if (dynamicObject1.getProperties().get("note") == null) {
-                dynamicObject1.getProperties().put("note", "");
-            }
-        });
+        JDBCResult jdbcResult = databaseService.callProcedureV2("REPORT_MIGRATE", "ISS_012", columns,
+            inputParams, outParams);
 
-        // List<DynamicObject> dynamicObjects = new ArrayList<>();
-        if (dynamicObjects.size() == 0) {
-            DynamicObject dynamicObject1 = new DynamicObject();
-            dynamicObject1.setColumns(columns);
-            dynamicObject1.setProperties(new LinkedHashMap<>());
-            dynamicObjects.add(dynamicObject1);
-        }
-        // System.out.println(dynamicObjects.get(0).getProperties());
-
+        JDBCResult jdbcResult2 = new JDBCResult(jdbcResult.getConnection(),null,"");
+        ;
+        String fileName = getFileName("ISS_012_",jdbcResult2,branch);
+        ResultSet resultSet = getResultSet(jdbcResult,2,inputParams);
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.getSheet("Report");
-        // title row 0
-        Row titleRow = sheet.createRow(0);
-        titleRow.createCell(0)
-                .setCellValue("BÁO CÁO CHI TIẾT THÔNG TIN THẺ KHÔNG CHUYỂN ĐỔI");
-        // font bold, size 16 for title
-        Font font = sheet.getWorkbook().createFont();
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 16);
-        CellStyle style = sheet.getWorkbook().createCellStyle();
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 36));
-
-        Font fontBold = sheet.getWorkbook().createFont();
-        fontBold.setBold(true);
-        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
-        styleBold.setFont(fontBold);
-
-        // date now format dd/MM/yyyy
-
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String dateStr = dateFormat.format(date);
-
-        // header row 1
-        Row row1 = sheet.createRow(1);
-        row1.createCell(1).setCellValue("Mã chi nhánh: " + branch.getBranchCode());
-        row1.getCell(1).setCellStyle(styleBold);
-        // header row 2
-        Row row2 = sheet.createRow(2);
-        row2.createCell(1).setCellValue("Tên chi nhánh: " + branch.getBranchName());
-        row2.createCell(15).setCellValue("Mã bc: ISS_012");
-        row2.getCell(1).setCellStyle(styleBold);
-        row2.getCell(15).setCellStyle(styleBold);
-
-        Row row4 = sheet.createRow(4);
-        row4.createCell(5).setCellValue("Ngày báo cáo: " + dateStr);
-        row4.getCell(5).setCellStyle(styleBold);
-
-        excelGenerator.generateExcel(6, dynamicObjects, false, Integer.parseInt(MAX_NUM_ROWS));
-        excelGenerator.writeExcel(fileName);
+        ReportParameters rpParam = new ReportParameters(resultSet,fileName,columns,new String[0],"BÁO CÁO CHI TIẾT " +
+            "THÔNG TIN THẺ KHÔNG CHUYỂN ĐỔI",branch.getBranchCode(),branch.getBranchName(),"ISS_012",date);
+        excelGenerator.writeResultSetToCSV(rpParam);
     }
 
     public void ATM_002()
@@ -1468,12 +1378,6 @@ public class ReportService {
     }
 
     public void ISS_002() throws FileNotFoundException, IOException, InterruptedException, SQLException {
-
-        Date date = new Date();
-        DateFormat dateFNFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
-        String dateFN = dateFNFormat.format(date);
-        String fileName = "FTPData/HSC/ISS_002_" + dateFN + ".xlsx";
-        DynamicObject dynamicObject = new DynamicObject();
         Map<String, String> columns = new LinkedHashMap<>();
         columns.put("CUSTR_REF", "Số CIF");
         columns.put("TENKH", "Cadencie");
@@ -1519,106 +1423,103 @@ public class ReportService {
         columns.put("CLIENT_SEC_CS", "Way4");
         columns.put("SS_HANG_KH", "So sánh (Pass/Fail)");
 
-        dynamicObject.setColumns(columns);
-
-        // not fill properties for now
-        dynamicObject.setProperties(new LinkedHashMap<>());
-
         Map<Integer, Object> inputParams = new HashMap<>();
         List<Integer> outParams = new ArrayList<>();
         outParams.add(1);
 
-        List<DynamicObject> dynamicObjects = databaseService.callProcedure("REPORT_MIGRATE", "ISS_002", columns,
+        String[] headers = { "","", "Tên KH","Tên KH","Tên KH", "Giới tính","Giới tính","Giới tính", "Ngày tháng năm " +
+            "sinh","Ngày tháng năm sinh","Ngày tháng năm sinh",
+            "Số CMND của KH","Số CMND của KH","Số CMND của KH", "Ngày hết hạn thị " ,"Ngày hết hạn thị " ,"Ngày hết hạn thị " ,
+            "lực","lực","lực",
+            "Địa chỉ thường chú","Địa chỉ thường chú","Địa chỉ thường chú",
+            "Địa chỉ cơ quan","Địa chỉ cơ quan","Địa chỉ cơ quan",
+            "Địa chỉ cư chú","Địa chỉ cư chú","Địa chỉ cư chú", "Số điện thoại","Số điện thoại","Số điện thoại",
+            "Email","Email","Email", "CIF status","CIF status","CIF status",
+            "Ngày hết hạn CMND KH (ADD_DATE_01)","Ngày hết hạn CMND KH (ADD_DATE_01)","Ngày hết hạn CMND KH (ADD_DATE_01)",
+            "Nhóm nợ CIC (STATUS_TYPE_CODE)","Nhóm nợ CIC (STATUS_TYPE_CODE)","Nhóm nợ CIC (STATUS_TYPE_CODE)",
+            "Hạng khách hàng","Hạng khách hàng","Hạng khách hàng" };
+
+
+        JDBCResult jdbcResult = databaseService.callProcedureV2("REPORT_MIGRATE", "ISS_002", columns,
                 inputParams, outParams);
-        if (dynamicObjects.size() == 0) {
-            dynamicObjects.add(dynamicObject);
-        }
+        JDBCResult jdbcResult2 = new JDBCResult(jdbcResult.getConnection(),null,"");
+        String fileName = getFileName("FTPData/HSC/ISS_002_",jdbcResult2,null);
 
+        ResultSet resultSet = getResultSet(jdbcResult,1,inputParams);
         ExcelGenerator excelGenerator = new ExcelGenerator();
-        Sheet sheet = excelGenerator.getSheet("Report");
-
-        // title row
-        Row titleRow = sheet.createRow(0);
-        titleRow.createCell(0)
-                .setCellValue(
-                        "BÁO CÁO ĐỐI CHIẾU DỮ LIỆU CIF KHCN TẠI CADENCIE - WAY4");
-        // font bold, size 16 for title
-        Font font = sheet.getWorkbook().createFont();
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 16);
-        CellStyle style = sheet.getWorkbook().createCellStyle();
-        style.setFont(font);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        titleRow.getCell(0).setCellStyle(style);
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 14));
-
-        Row row1 = sheet.createRow(1);
-        row1.createCell(0).setCellValue("Mã chi nhánh: ");
-        row1.createCell(9).setCellValue("Mã báo cáo: ISS_002");
-        Row row2 = sheet.createRow(2);
-        row2.createCell(0).setCellValue("Tên chi nhánh: ");
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String dateStr = dateFormat.format(date);
-        Row row3 = sheet.createRow(3);
-        row3.createCell(9).setCellValue("Ngày báo cáo: " + dateStr);
-
-        Font fontBold = sheet.getWorkbook().createFont();
-        fontBold.setBold(true);
-        CellStyle styleBold = sheet.getWorkbook().createCellStyle();
-        styleBold.setFont(fontBold);
-
-        row1.getCell(0).setCellStyle(styleBold);
-        row1.getCell(9).setCellStyle(styleBold);
-        row2.getCell(0).setCellStyle(styleBold);
-        row3.getCell(9).setCellStyle(styleBold);
-
-        Row headerRow = sheet.createRow(6);
-        Row headerRow2 = sheet.createRow(7);
-        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        // bold font, wrap text, middle alignment
-        Font font2 = sheet.getWorkbook().createFont();
-        font2.setBold(true);
-        cellStyle.setFont(font2);
-        cellStyle.setWrapText(true);
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        headerRow.createCell(0).setCellValue("STT");
-        headerRow2.createCell(0).setCellStyle(cellStyle);
-        headerRow.createCell(1).setCellValue((String) columns.values().toArray()[0]);
-        headerRow.getCell(1).setCellStyle(cellStyle);
-        headerRow2.createCell(1).setCellValue((String) columns.values().toArray()[0]);
-        headerRow2.getCell(1).setCellStyle(cellStyle);
-        headerRow.getCell(0).setCellStyle(cellStyle);
-
-        String[] header = { "Tên KH", "Giới tính", "Ngày tháng năm sinh", "Số CMND của KH", "Ngày hết hạn thị lực",
-                "Địa chỉ thường chú", "Địa chỉ cơ quan", "Địa chỉ cư chú", "Số điện thoại", "Email", "CIF status",
-                "Ngày hết hạn CMND KH (ADD_DATE_01)", "Nhóm nợ CIC (STATUS_TYPE_CODE)", "Hạng khách hàng" };
-
-        for (int i = 2; i < columns.size() + 1; i++) {
-            headerRow.createCell(i).setCellStyle(cellStyle);
-            headerRow2.createCell(i).setCellValue((String) columns.values().toArray()[i - 1]);
-            // sheet.autoSizeColumn(i);
-            sheet.setColumnWidth(i, 20 * 256);
-            headerRow2.getCell(i).setCellStyle(cellStyle);
-        }
-
-        // no sum
-        // merge cell for header: every 3 columns begin from 2
-        for (int i = 2; i < columns.size(); i += 3) {
-            headerRow.getCell(i).setCellValue(header[i / 3]);
-            sheet.addMergedRegion(new CellRangeAddress(6, 6, i, i + 2));
-        }
-
-        sheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 0));
-        sheet.addMergedRegion(new CellRangeAddress(6, 7, 1, 1));
-
-        excelGenerator.generateExcel(8, dynamicObjects, true, Integer.parseInt(MAX_NUM_ROWS));
-        excelGenerator.writeExcel(fileName);
+        ReportParameters rpParam = new ReportParameters(resultSet,fileName,columns,headers,"BÁO CÁO ĐỐI CHIẾU DỮ LIỆU" +
+            " CIF KHCN TẠI CADENCIE - WAY4","","","ISS_002",new Date());
+        excelGenerator.writeResultSetToCSV(rpParam);
     }
+
+    public String getFileName(String prefix,JDBCResult jdbcResult,Branch branch) throws SQLException {
+        try{
+            JDBCResult jdbcResultFileName = new JDBCResult(jdbcResult.getConnection(),null,"SELECT  TRUNC(T.JOB_DATE) AS JOB_DATE, T.JOB_NAME\n" +
+                "FROM FPT_REPORT_DATE T\n" +
+                "WHERE T.ENABLE = 1\n" +
+                "ORDER BY TRUNC(T.JOB_DATE)\n" +
+                "FETCH FIRST 1 ROWS ONLY");
+            ResultSet resultSetFileName = getResultSet(jdbcResultFileName,null,null);
+            SimpleDateFormat dayFormat = new SimpleDateFormat("ddMMyyyy");
+            String formattedDate = dayFormat.format(new Date());
+            String fileName = prefix  +formattedDate + ".csv";
+
+
+            while (resultSetFileName.next()) {
+                // Lấy JOB_DATE và JOB_NAME từ ResultSet
+                Date jobDate = resultSetFileName.getDate("JOB_DATE");
+                String jobName = resultSetFileName.getString("JOB_NAME");
+                formattedDate = dayFormat.format(jobDate);
+                fileName = prefix  +formattedDate+ "_" + jobName + ".csv";
+                if(branch != null){
+                    fileName =
+                        branch.getFolderPath() + prefix +branch.getBranchCode() + "_"+branch.getBranchName()+"_" +  formattedDate + "_" + jobName +
+                            ".csv";
+                }
+                // Tạo fileName
+                String folderPath = branch != null ? branch.getFolderPath():"FTPData/HSC";
+                File folder = new File(folderPath);
+                if (!folder.exists()) {
+                    boolean created = folder.mkdirs();  // Tạo thư mục nếu chưa tồn tại
+                    if (created) {
+                        System.out.println("Thư mục đã được tạo: " + folderPath);
+                    } else {
+                        System.out.println("Không thể tạo thư mục: " + folderPath);
+                    }
+                }
+            }
+            return fileName;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return prefix;
+    }
+
+    public ResultSet getResultSet(JDBCResult jdbcResult,Integer paramIndex,Map<Integer, Object> inputParams) throws SQLException {
+        try {
+            CallableStatement statement = jdbcResult.getConnection().prepareCall(jdbcResult.getCall());
+            if(paramIndex != null){
+                statement.registerOutParameter(paramIndex, Types.REF_CURSOR);
+            }
+            statement.setFetchSize(1000);
+            if(inputParams != null){
+                for (Map.Entry<Integer, Object> entry : inputParams.entrySet()) {
+                    statement.setObject(entry.getKey(), entry.getValue());
+                }
+            }
+            statement.execute();
+
+            ResultSet resultSet = paramIndex != null ? (ResultSet) statement.getObject(paramIndex):
+                (ResultSet) statement.getResultSet();
+            return resultSet;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     public void ISS_005() throws SQLException, FileNotFoundException, IOException, InterruptedException {
 

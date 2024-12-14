@@ -6,13 +6,13 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class DataSourceConfig {
-    // private final static String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
-    // private final static String username = "dmreport";
-    // private final static String password = "Bidv@123456";
+    private final static String url = "jdbc:oracle:thin:@//10.53.115.61:1521/way4migrate";
+    private final static String username = "dmreport";
+    private final static String password = "abc@123456";
 
-    private static final String url = System.getenv("DB_URL");
-    private static final String username = System.getenv("DB_USERNAME");
-    private static final String password = System.getenv("DB_PASSWORD");
+    // private static final String url = System.getenv("DB_URL");
+    // private static final String username = System.getenv("DB_USERNAME");
+    // private static final String password = System.getenv("DB_PASSWORD");
 
     public static DataSource getDataSource() {
         HikariConfig config = new HikariConfig();

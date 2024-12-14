@@ -1,11 +1,9 @@
 package com.fis.services;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,9 +11,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Date;
 import javax.sql.DataSource;
 
+import com.fis.types.JDBCResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,8 +58,40 @@ public class DatabaseService {
 
     // Method to dynamically call a stored procedure from an Oracle package and map
     // result to DynamicObject
-    public List<DynamicObject> callProcedure(String packageName, String procedureName, Map<String, String> columns,
+    public JDBCResult callProcedureV2(String packageName, String procedureName, Map<String, String> columns,
             Map<Integer, Object> inputParams, List<Integer> outParams) throws SQLException {
+        long startTime = System.currentTimeMillis();
+        // Build the SQL call string dynamically based on the number of parameters
+        String call = buildProcedureCall(packageName, procedureName, inputParams.size(), outParams.size());
+        Connection connection = dataSource.getConnection();
+        try (
+            CallableStatement statement = connection.prepareCall(call)) {
+//            statement.registerOutParameter(1, Types.REF_CURSOR);
+//            statement.setFetchSize(1000);
+//            for (Map.Entry<Integer, Object> entry : inputParams.entrySet()) {
+//                statement.setObject(entry.getKey(), entry.getValue());
+//            }
+//            for (Integer outParamIndex : outParams) {
+//                statement.registerOutParameter(outParamIndex, Types.REF_CURSOR);
+//            }
+            System.out.println(" inputParams = " + inputParams + ", outParams = " + outParams);
+//            statement.execute();
+
+            long endGet = System.currentTimeMillis();
+            System.out.println("TOTAL TIME GET DATA: " + (endGet - startTime) + "ms");
+            return new JDBCResult(connection, null, call);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        long endTime = System.currentTimeMillis();
+        logger.trace("Thread " + Thread.currentThread().getId() + " " + Thread.currentThread().getName()
+                + " query done on " + procedureName + " (Duration: " + (endTime - startTime) + " ms)");
+        return null;
+    }
+
+    public List<DynamicObject> callProcedure(String packageName, String procedureName, Map<String, String> columns,
+                                             Map<Integer, Object> inputParams, List<Integer> outParams) throws SQLException {
         List<DynamicObject> resultList = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         // Build the SQL call string dynamically based on the number of parameters
@@ -69,29 +100,37 @@ public class DatabaseService {
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
-            CallableStatement callableStatement = connection.prepareCall(call);
-
+            CallableStatement statement = connection.prepareCall(call);
+            statement.registerOutParameter(1, Types.REF_CURSOR);
+            statement.setFetchSize(1000);
+            statement.execute();
+            ResultSet resultSet = (ResultSet) statement.getObject(1);
             // Set input parameters
             for (Map.Entry<Integer, Object> entry : inputParams.entrySet()) {
-                callableStatement.setObject(entry.getKey(), entry.getValue());
+                statement.setObject(entry.getKey(), entry.getValue());
             }
 
-            // Register output parameters
-            for (Integer outParamIndex : outParams) {
-                callableStatement.registerOutParameter(outParamIndex, Types.REF_CURSOR);
-            }
-
+//            // Register output parameters
+//            for (Integer outParamIndex : outParams) {
+//                callableStatement.registerOutParameter(outParamIndex, Types.REF_CURSOR);
+//            }
+//            callableStatement.setFetchSize(1000);
             // Execute the procedure
-            callableStatement.execute();
+//            callableStatement.execute();
 
             // Map the result set to a list of DynamicObjects
-            for (Integer outParamIndex : outParams) {
-                ResultSet resultSet = (ResultSet) callableStatement.getObject(outParamIndex);
-                // check resultSet is empty
-                if (resultSet.isBeforeFirst()) {
-                    resultList.addAll(mapResultSetToDynamicObject(resultSet, columns));
-                }
+//            for (Integer outParamIndex : outParams) {
+//                ResultSet resultSet = (ResultSet) callableStatement.getObject(outParamIndex);
+//                // check resultSet is empty
+//
+//            }
+
+
+            if (resultSet.isBeforeFirst()) {
+                resultList.addAll(mapResultSetToDynamicObject(resultSet, columns));
             }
+
+
 
             // Map the output parameters to a DynamicObject
             // if (!outParams.isEmpty()) {
@@ -106,8 +145,45 @@ public class DatabaseService {
         }
         long endTime = System.currentTimeMillis();
         logger.trace("Thread " + Thread.currentThread().getId() + " " + Thread.currentThread().getName()
-                + " query done on " + procedureName + " (Duration: " + (endTime - startTime) + " ms)");
+            + " query done on " + procedureName + " (Duration: " + (endTime - startTime) + " ms)");
         return resultList;
+    }
+    private static void writeDataToFile(ResultSet resultSet, BufferedWriter writer, long startTime) throws Exception {
+        // Ghi tiêu đề
+        writer.write("ID,Name,Value");
+        writer.newLine();
+
+        // Ghi dữ liệu
+        int rowCount = 0;
+        System.out.println("Size of resultSet: " + resultSet.getFetchSize());
+        while (resultSet.next()) {
+
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            StringBuilder row = new StringBuilder();
+
+            for (int i = 1; i <= columnCount; i++) {
+                if (i > 1) {
+                    row.append(",");
+                }
+                // Xử lý giá trị null
+                String value = resultSet.getString(i);
+                row.append(value != null ? value : "");
+            }
+            writer.write(row.toString());
+            writer.newLine();
+            rowCount++;
+
+            if (rowCount % 100000 == 0) {
+                System.out.println("Đã xử lý: " + rowCount + " bản ghi");
+                System.out.println("START TIME: " + new Date());
+            }
+        }
+
+        System.out.println("\nTổng số bản ghi đã xử lý: " + rowCount);
+        System.out.println("END TIME: " + new Date());
+        long endTime = System.currentTimeMillis();
+        System.out.println("TOTAL TIME: " + (endTime - startTime)/1000 + " seconds");
     }
 
     // 30-9-2024 vietnq
@@ -131,49 +207,62 @@ public class DatabaseService {
 
     // 30-9-2024 vietnq
     // Helper method to map the result set to a list of DynamicObjects
-    private List<DynamicObject> mapResultSetToDynamicObject(ResultSet resultSet, Map<String, String> columns)
-            throws SQLException {
+    public List<DynamicObject> mapResultSetToDynamicObject(ResultSet resultSet, Map<String, String> columns) throws SQLException {
         List<DynamicObject> resultList = new ArrayList<>();
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
 
-        while (resultSet.next()) {
-            Map<String, Object> properties = new LinkedHashMap<>();
-            // for each key in columns init properties with key and value = ""
+        // Pre-compute column name mapping to avoid repeated lookups
+        Map<Integer, String> columnIndexToKey = new HashMap<>();
+        for (int i = 1; i <= columnCount; i++) {
+            String columnName = metaData.getColumnName(i);
             for (String key : columns.keySet()) {
-                if (key.equalsIgnoreCase("STT") || key.equalsIgnoreCase("TT")) {
-                    continue;
-                }
-                properties.put(key, "");
-            }
-
-            for (int j = 0; j < columns.size(); j++) {
-                for (int i = 1; i <= columnCount; i++) {
-                    String columnName = metaData.getColumnName(i);
-                    String columnType = columns.get(columnName);
-                    Object columnValue = resultSet.getObject(i);
-
-                    // Perform type-specific operations if needed
-                    if ("DATE".equals(columnType)) {
-                        // format dd/MM/yyyy
-                        DateFormat dateFNFormat = new SimpleDateFormat("dd/MM/yyyy");
-                        columnValue = dateFNFormat.format(resultSet.getDate(i));
-                    }
-
-                    // check null return ""
-                    if (columnValue == null) {
-                        columnValue = "";
-                    }
-
-                    // check column[j] key is equal to column name
-                    if (columns.keySet().toArray()[j].toString().equalsIgnoreCase(columnName)) {
-
-                        properties.put(columns.keySet().toArray()[j].toString(), columnValue);
-                    }
+                if (key.equalsIgnoreCase(columnName)) {
+                    columnIndexToKey.put(i, key);
+                    break;
                 }
             }
-            resultList.add(new DynamicObject(properties, columns));
         }
+
+        // Create date formatter once
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        // Process in batches
+        int batchSize = 1000;
+        int rowCount = 0;
+
+        while (resultSet.next()) {
+            Map<String, Object> properties = new LinkedHashMap<>(columns.size());
+
+            // Initialize properties with empty values only for relevant columns
+            for (String key : columns.keySet()) {
+                if (!key.equalsIgnoreCase("STT") && !key.equalsIgnoreCase("TT")) {
+                    properties.put(key, "");
+                }
+            }
+
+            // Direct column mapping using pre-computed index
+            for (int i = 1; i <= columnCount; i++) {
+                String key = columnIndexToKey.get(i);
+                if (key != null) {
+                    Object value = resultSet.getObject(i);
+                    if (value != null) {
+                        if ("DATE".equals(columns.get(key))) {
+                            value = dateFormatter.format(resultSet.getDate(i));
+                        }
+                        properties.put(key, value);
+                    }
+                }
+            }
+
+            resultList.add(new DynamicObject(properties, columns));
+
+            // Log only every 1000 records
+            if (++rowCount % batchSize == 0) {
+                System.out.println("Processed " + rowCount + " records");
+            }
+        }
+
         return resultList;
     }
 
